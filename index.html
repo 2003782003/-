@@ -1,0 +1,4239 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ورشة شويخ - إدارة تصليح المحركات</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      :root {
+        --bg-primary: #0f172a;
+        --bg-secondary: #1e293b;
+        --bg-card: #1e293b;
+        --bg-card-hover: #334155;
+        --bg-glass: rgba(30, 41, 59, 0.8);
+        --text-primary: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+        --border-color: #334155;
+        --accent-blue: #3b82f6;
+        --accent-green: #10b981;
+        --accent-red: #ef4444;
+        --accent-yellow: #f59e0b;
+        --accent-purple: #8b5cf6;
+        --accent-orange: #f97316;
+        --accent-cyan: #06b6d4;
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        --radius: 12px;
+        --transition: all 0.3s ease;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Cairo", sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--bg-primary) 0%,
+          var(--bg-secondary) 100%
+        );
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-primary);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--accent-blue);
+        border-radius: 3px;
+      }
+
+      /* Toast Notifications */
+      .toast-container {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .toast {
+        padding: 12px 24px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        animation: slideDown 0.3s ease;
+        min-width: 300px;
+        text-align: center;
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+      }
+      .toast.success {
+        background: var(--accent-green);
+      }
+      .toast.error {
+        background: var(--accent-red);
+      }
+      .toast.warning {
+        background: var(--accent-yellow);
+        color: #1a1a1a;
+      }
+      .toast.info {
+        background: var(--accent-blue);
+      }
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Login Page */
+      .login-page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(
+          135deg,
+          #0f172a 0%,
+          #1e293b 50%,
+          #0f172a 100%
+        );
+        padding: 20px;
+      }
+      .login-container {
+        background: var(--bg-glass);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 40px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: var(--shadow-lg);
+      }
+      .login-logo {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .login-logo i {
+        font-size: 48px;
+        color: var(--accent-blue);
+        margin-bottom: 10px;
+        display: block;
+      }
+      .login-logo h1 {
+        font-size: 28px;
+        font-weight: 800;
+        background: linear-gradient(
+          135deg,
+          var(--accent-blue),
+          var(--accent-cyan)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .login-logo p {
+        color: var(--text-secondary);
+        font-size: 14px;
+      }
+
+      .login-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 25px;
+      }
+      .login-tab {
+        flex: 1;
+        padding: 10px;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        background: transparent;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: "Cairo";
+        font-weight: 600;
+        font-size: 14px;
+        transition: var(--transition);
+      }
+      .login-tab.active {
+        border-color: var(--accent-blue);
+        color: var(--accent-blue);
+        background: rgba(59, 130, 246, 0.1);
+      }
+
+      .form-group {
+        margin-bottom: 18px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-secondary);
+      }
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 2px solid var(--border-color);
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: "Cairo";
+        font-size: 14px;
+        transition: var(--transition);
+        outline: none;
+      }
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        border-color: var(--accent-blue);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+      }
+      .form-group textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        font-family: "Cairo";
+        font-weight: 700;
+        font-size: 14px;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: center;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+        color: white;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+      }
+      .btn-success {
+        background: linear-gradient(135deg, var(--accent-green), #059669);
+        color: white;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      }
+      .btn-success:hover {
+        transform: translateY(-2px);
+      }
+      .btn-danger {
+        background: linear-gradient(135deg, var(--accent-red), #dc2626);
+        color: white;
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+      }
+      .btn-danger:hover {
+        transform: translateY(-2px);
+      }
+      .btn-warning {
+        background: linear-gradient(135deg, var(--accent-yellow), #d97706);
+        color: white;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+      }
+      .btn-warning:hover {
+        transform: translateY(-2px);
+      }
+      .btn-secondary {
+        background: var(--bg-card);
+        color: var(--text-primary);
+        border: 2px solid var(--border-color);
+      }
+      .btn-secondary:hover {
+        border-color: var(--accent-blue);
+      }
+      .btn-full {
+        width: 100%;
+      }
+      .btn-sm {
+        padding: 8px 16px;
+        font-size: 12px;
+      }
+
+      /* App Layout */
+      .app-layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 260px;
+        background: var(--bg-glass);
+        backdrop-filter: blur(20px);
+        border-left: 1px solid var(--border-color);
+        padding: 20px 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        transition: var(--transition);
+        overflow-y: auto;
+      }
+      .sidebar-header {
+        padding: 0 20px 20px;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 10px;
+      }
+      .sidebar-header h2 {
+        font-size: 20px;
+        font-weight: 800;
+        background: linear-gradient(
+          135deg,
+          var(--accent-blue),
+          var(--accent-cyan)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .sidebar-header p {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 20px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: var(--transition);
+        border-right: 3px solid transparent;
+        font-weight: 600;
+        font-size: 14px;
+        position: relative;
+      }
+      .nav-item:hover {
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--text-primary);
+      }
+      .nav-item.active {
+        background: rgba(59, 130, 246, 0.15);
+        color: var(--accent-blue);
+        border-right-color: var(--accent-blue);
+      }
+      .nav-item i {
+        width: 20px;
+        text-align: center;
+      }
+      .nav-item .badge {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--accent-red);
+        color: white;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 10px;
+        min-width: 18px;
+        text-align: center;
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        padding: 15px 20px;
+        border-top: 1px solid var(--border-color);
+      }
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          var(--accent-blue),
+          var(--accent-purple)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 16px;
+      }
+      .user-details h4 {
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .user-details p {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        margin-right: 260px;
+        padding: 20px;
+      }
+
+      /* Header */
+      .top-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 25px;
+        padding: 15px 20px;
+        background: var(--bg-glass);
+        backdrop-filter: blur(20px);
+        border-radius: var(--radius);
+        border: 1px solid var(--border-color);
+      }
+      .top-header h1 {
+        font-size: 22px;
+        font-weight: 800;
+      }
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .notification-bell {
+        position: relative;
+        cursor: pointer;
+        padding: 8px;
+        color: var(--text-secondary);
+        transition: var(--transition);
+      }
+      .notification-bell:hover {
+        color: var(--accent-yellow);
+      }
+      .notification-bell i {
+        font-size: 20px;
+      }
+      .notification-bell .notif-count {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: var(--accent-red);
+        color: white;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 1px 5px;
+        border-radius: 10px;
+        min-width: 16px;
+        text-align: center;
+        display: none;
+      }
+      .notification-bell .notif-count.show {
+        display: block;
+      }
+
+      /* Notification Dropdown */
+      .notif-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 350px;
+        max-height: 400px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-lg);
+        z-index: 1000;
+        display: none;
+        overflow: hidden;
+      }
+      .notif-dropdown.show {
+        display: block;
+      }
+      .notif-dropdown-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .notif-dropdown-header h4 {
+        font-size: 14px;
+      }
+      .notif-dropdown-header button {
+        background: none;
+        border: none;
+        color: var(--accent-blue);
+        cursor: pointer;
+        font-family: "Cairo";
+        font-size: 12px;
+      }
+      .notif-dropdown-list {
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      .notif-dropdown-item {
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        gap: 10px;
+      }
+      .notif-dropdown-item:hover {
+        background: rgba(59, 130, 246, 0.1);
+      }
+      .notif-dropdown-item.unread {
+        background: rgba(59, 130, 246, 0.05);
+      }
+      .notif-dropdown-item .notif-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 14px;
+      }
+      .notif-dropdown-item .notif-content {
+        flex: 1;
+      }
+      .notif-dropdown-item .notif-content h5 {
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .notif-dropdown-item .notif-content p {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+      .notif-dropdown-footer {
+        padding: 10px;
+        text-align: center;
+        border-top: 1px solid var(--border-color);
+      }
+      .notif-dropdown-footer a {
+        color: var(--accent-blue);
+        font-size: 13px;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      /* Cards */
+      .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
+        padding: 20px;
+        transition: var(--transition);
+      }
+      .card:hover {
+        border-color: rgba(59, 130, 246, 0.3);
+        box-shadow: var(--shadow-lg);
+      }
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .card-header h3 {
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      /* Stats Grid */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 25px;
+      }
+      .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
+        padding: 20px;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+      }
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 4px;
+        height: 100%;
+        border-radius: 0 var(--radius) var(--radius) 0;
+      }
+      .stat-card.blue::before {
+        background: var(--accent-blue);
+      }
+      .stat-card.green::before {
+        background: var(--accent-green);
+      }
+      .stat-card.red::before {
+        background: var(--accent-red);
+      }
+      .stat-card.yellow::before {
+        background: var(--accent-yellow);
+      }
+      .stat-card.purple::before {
+        background: var(--accent-purple);
+      }
+      .stat-card.orange::before {
+        background: var(--accent-orange);
+      }
+      .stat-card .stat-icon {
+        font-size: 28px;
+        margin-bottom: 10px;
+      }
+      .stat-card.blue .stat-icon {
+        color: var(--accent-blue);
+      }
+      .stat-card.green .stat-icon {
+        color: var(--accent-green);
+      }
+      .stat-card.red .stat-icon {
+        color: var(--accent-red);
+      }
+      .stat-card.yellow .stat-icon {
+        color: var(--accent-yellow);
+      }
+      .stat-card.purple .stat-icon {
+        color: var(--accent-purple);
+      }
+      .stat-card.orange .stat-icon {
+        color: var(--accent-orange);
+      }
+      .stat-card .stat-value {
+        font-size: 28px;
+        font-weight: 800;
+      }
+      .stat-card .stat-label {
+        font-size: 13px;
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+
+      /* Table */
+      .table-container {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th {
+        padding: 12px 16px;
+        text-align: right;
+        font-weight: 700;
+        font-size: 13px;
+        color: var(--text-muted);
+        border-bottom: 2px solid var(--border-color);
+      }
+      td {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border-color);
+        font-size: 14px;
+      }
+      tr:hover td {
+        background: rgba(59, 130, 246, 0.05);
+      }
+
+      /* Status Badges */
+      .status-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .status-badge.unrepaired {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--accent-red);
+      }
+      .status-badge.in_progress {
+        background: rgba(245, 158, 11, 0.15);
+        color: var(--accent-yellow);
+      }
+      .status-badge.ready {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--accent-green);
+      }
+      .status-badge.delivered {
+        background: rgba(59, 130, 246, 0.15);
+        color: var(--accent-blue);
+      }
+
+      /* Customer Sections */
+      .customer-sections {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+      .customer-section {
+        border-radius: var(--radius);
+        padding: 20px;
+        border: 1px solid;
+        transition: var(--transition);
+      }
+      .customer-section:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+      }
+      .customer-section.green {
+        background: rgba(16, 185, 129, 0.08);
+        border-color: rgba(16, 185, 129, 0.3);
+      }
+      .customer-section.red {
+        background: rgba(239, 68, 68, 0.08);
+        border-color: rgba(239, 68, 68, 0.3);
+      }
+      .customer-section.blue {
+        background: rgba(59, 130, 246, 0.08);
+        border-color: rgba(59, 130, 246, 0.3);
+      }
+      .customer-section.orange {
+        background: rgba(249, 115, 22, 0.08);
+        border-color: rgba(249, 115, 22, 0.3);
+      }
+      .customer-section .section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      .customer-section .section-header i {
+        font-size: 24px;
+      }
+      .customer-section.green .section-header i {
+        color: var(--accent-green);
+      }
+      .customer-section.red .section-header i {
+        color: var(--accent-red);
+      }
+      .customer-section.blue .section-header i {
+        color: var(--accent-blue);
+      }
+      .customer-section.orange .section-header i {
+        color: var(--accent-orange);
+      }
+      .customer-section .section-header h3 {
+        font-size: 16px;
+        font-weight: 700;
+      }
+      .customer-section .section-count {
+        font-size: 32px;
+        font-weight: 800;
+        margin-bottom: 10px;
+      }
+      .customer-section.green .section-count {
+        color: var(--accent-green);
+      }
+      .customer-section.red .section-count {
+        color: var(--accent-red);
+      }
+      .customer-section.blue .section-count {
+        color: var(--accent-blue);
+      }
+      .customer-section.orange .section-count {
+        color: var(--accent-orange);
+      }
+
+      /* Pump Item */
+      .pump-item {
+        background: var(--bg-primary);
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: var(--transition);
+        border: 1px solid transparent;
+      }
+      .pump-item:hover {
+        border-color: var(--border-color);
+      }
+      .pump-info h4 {
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .pump-info p {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      /* Messages */
+      .chat-container {
+        display: flex;
+        height: calc(100vh - 160px);
+        gap: 15px;
+      }
+      .chat-list {
+        width: 280px;
+        background: var(--bg-card);
+        border-radius: var(--radius);
+        border: 1px solid var(--border-color);
+        overflow-y: auto;
+        flex-shrink: 0;
+      }
+      .chat-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .chat-item:hover {
+        background: rgba(59, 130, 246, 0.1);
+      }
+      .chat-item.active {
+        background: rgba(59, 130, 246, 0.15);
+      }
+      .chat-item .chat-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          var(--accent-blue),
+          var(--accent-purple)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .chat-item .chat-preview {
+        flex: 1;
+        overflow: hidden;
+      }
+      .chat-item .chat-preview h4 {
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .chat-item .chat-preview p {
+        font-size: 12px;
+        color: var(--text-muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .chat-item .unread-dot {
+        width: 10px;
+        height: 10px;
+        background: var(--accent-blue);
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .chat-window {
+        flex: 1;
+        background: var(--bg-card);
+        border-radius: var(--radius);
+        border: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+      }
+      .chat-header-bar {
+        padding: 15px 20px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .message-bubble {
+        max-width: 70%;
+        padding: 10px 15px;
+        border-radius: 15px;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      .message-bubble.sent {
+        background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+        color: white;
+        align-self: flex-start;
+        border-bottom-right-radius: 5px;
+      }
+      .message-bubble.received {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        align-self: flex-end;
+        border-bottom-left-radius: 5px;
+      }
+      .message-time {
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+      .chat-input-bar {
+        padding: 15px 20px;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        gap: 10px;
+      }
+      .chat-input-bar input {
+        flex: 1;
+        padding: 10px 16px;
+        border-radius: 25px;
+        border: 2px solid var(--border-color);
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: "Cairo";
+        font-size: 14px;
+        outline: none;
+      }
+      .chat-input-bar input:focus {
+        border-color: var(--accent-blue);
+      }
+      .chat-input-bar button {
+        padding: 10px 20px;
+        border-radius: 25px;
+        border: none;
+        background: var(--accent-blue);
+        color: white;
+        cursor: pointer;
+        font-family: "Cairo";
+        font-weight: 600;
+      }
+
+      /* Filter Tabs */
+      .filter-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .filter-tab {
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: 2px solid var(--border-color);
+        background: transparent;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-family: "Cairo";
+        font-weight: 600;
+        font-size: 13px;
+        transition: var(--transition);
+      }
+      .filter-tab.active {
+        border-color: var(--accent-blue);
+        color: var(--accent-blue);
+        background: rgba(59, 130, 246, 0.1);
+      }
+
+      /* Progress Bar */
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: var(--bg-primary);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 8px;
+      }
+      .progress-bar .progress-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.5s ease;
+      }
+      .progress-bar .progress-fill.green {
+        background: var(--accent-green);
+      }
+      .progress-bar .progress-fill.red {
+        background: var(--accent-red);
+      }
+      .progress-bar .progress-fill.blue {
+        background: var(--accent-blue);
+      }
+      .progress-bar .progress-fill.yellow {
+        background: var(--accent-yellow);
+      }
+
+      /* Modal */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(5px);
+        z-index: 5000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .modal-overlay.show {
+        display: flex;
+      }
+      .modal {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 30px;
+        width: 100%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: slideDown 0.3s ease;
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .modal-header h3 {
+        font-size: 18px;
+        font-weight: 700;
+      }
+      .modal-close {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 20px;
+      }
+
+      /* Notifications Page */
+      .notif-page-item {
+        display: flex;
+        gap: 15px;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        transition: var(--transition);
+        border: 1px solid var(--border-color);
+        position: relative;
+        overflow: hidden;
+      }
+      .notif-page-item.unread {
+        background: rgba(59, 130, 246, 0.05);
+        border-color: rgba(59, 130, 246, 0.2);
+      }
+      .notif-page-item .priority-bar {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+      }
+      .notif-page-item .priority-bar.urgent {
+        background: var(--accent-red);
+      }
+      .notif-page-item .priority-bar.high {
+        background: var(--accent-orange);
+      }
+      .notif-page-item .priority-bar.normal {
+        background: var(--accent-blue);
+      }
+      .notif-page-item .priority-bar.low {
+        background: var(--text-muted);
+      }
+      .notif-page-item .notif-icon-large {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .notif-page-item .notif-body {
+        flex: 1;
+      }
+      .notif-page-item .notif-body h4 {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .notif-page-item .notif-body p {
+        font-size: 13px;
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+      .notif-page-item .notif-meta {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 6px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .notif-page-item .notif-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .notif-page-item .notif-actions button {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 4px;
+      }
+      .notif-page-item .notif-actions button:hover {
+        color: var(--accent-red);
+      }
+
+      .priority-tag {
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: 700;
+      }
+      .priority-tag.urgent {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--accent-red);
+      }
+      .priority-tag.high {
+        background: rgba(249, 115, 22, 0.15);
+        color: var(--accent-orange);
+      }
+
+      /* Debt Reminder Banner */
+      .reminder-banner {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: var(--radius);
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .reminder-banner i {
+        font-size: 24px;
+        color: var(--accent-yellow);
+      }
+      .reminder-banner .banner-text h4 {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--accent-yellow);
+      }
+      .reminder-banner .banner-text p {
+        font-size: 13px;
+        color: var(--text-secondary);
+      }
+
+      /* Spare Parts Missing Section */
+      .missing-parts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 15px;
+      }
+      .missing-part-card {
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-radius: 10px;
+        padding: 15px;
+        transition: var(--transition);
+      }
+      .missing-part-card:hover {
+        border-color: rgba(239, 68, 68, 0.4);
+      }
+      .missing-part-card h4 {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--accent-red);
+      }
+      .missing-part-card .part-pump {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+
+      /* Search Box */
+      .search-box {
+        position: relative;
+        margin-bottom: 20px;
+      }
+      .search-box input {
+        width: 100%;
+        padding: 12px 16px 12px 44px;
+        border-radius: 10px;
+        border: 2px solid var(--border-color);
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: "Cairo";
+        font-size: 14px;
+        outline: none;
+      }
+      .search-box input:focus {
+        border-color: var(--accent-blue);
+      }
+      .search-box i {
+        position: absolute;
+        left: auto;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+      }
+
+      /* Autocomplete */
+      .autocomplete-list {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        left: 0;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 100;
+        display: none;
+      }
+      .autocomplete-list.show {
+        display: block;
+      }
+      .autocomplete-item {
+        padding: 10px 16px;
+        cursor: pointer;
+        transition: var(--transition);
+        border-bottom: 1px solid var(--border-color);
+      }
+      .autocomplete-item:hover {
+        background: rgba(59, 130, 246, 0.1);
+      }
+      .autocomplete-item:last-child {
+        border-bottom: none;
+      }
+
+      /* Spare Parts List */
+      .spare-part-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        background: var(--bg-primary);
+        border-radius: 8px;
+        margin-bottom: 8px;
+      }
+      .spare-part-item .part-name {
+        flex: 1;
+        font-weight: 600;
+      }
+      .spare-part-item .part-qty {
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+      .spare-part-item .part-price {
+        color: var(--accent-green);
+        font-weight: 700;
+      }
+      .spare-part-item .part-status {
+        font-size: 12px;
+      }
+      .spare-part-item .part-status.available {
+        color: var(--accent-green);
+      }
+      .spare-part-item .part-status.unavailable {
+        color: var(--accent-red);
+      }
+
+      /* Mobile Toggle */
+      .mobile-toggle {
+        display: none;
+        position: fixed;
+        top: 15px;
+        right: 15px;
+        z-index: 200;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: none;
+        background: var(--accent-blue);
+        color: white;
+        cursor: pointer;
+        font-size: 18px;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .mobile-toggle {
+          display: block;
+        }
+        .sidebar {
+          transform: translateX(100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+        .main-content {
+          margin-right: 0;
+        }
+        .chat-container {
+          flex-direction: column;
+          height: auto;
+        }
+        .chat-list {
+          width: 100%;
+          max-height: 200px;
+        }
+        .chat-window {
+          min-height: 400px;
+        }
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .customer-sections {
+          grid-template-columns: 1fr;
+        }
+        .notif-dropdown {
+          width: 300px;
+          right: -50px;
+        }
+      }
+
+      .hidden {
+        display: none !important;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: var(--text-muted);
+      }
+      .empty-state i {
+        font-size: 48px;
+        margin-bottom: 15px;
+        display: block;
+      }
+      .empty-state p {
+        font-size: 16px;
+      }
+
+      .debt-settings-form .form-row {
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+      }
+      .debt-settings-form .form-row > * {
+        flex: 1;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .chip.active {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--accent-green);
+      }
+      .chip.inactive {
+        background: rgba(100, 116, 139, 0.15);
+        color: var(--text-muted);
+      }
+
+      .img-preview {
+        max-width: 200px;
+        max-height: 150px;
+        border-radius: 8px;
+        margin-top: 8px;
+        object-fit: cover;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+      @media (max-width: 768px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- APP CONTAINER -->
+    <div id="app"></div>
+
+    <script>
+      // ==========================================
+      // ورشة شويخ - نظام إدارة تصليح المحركات
+      // Full Application with IndexedDB
+      // ==========================================
+
+      const APP_NAME = "ورشة شويخ";
+      const CURRENCY = "د.ج";
+
+      // ==========================================
+      // DATABASE LAYER (IndexedDB)
+      // ==========================================
+      class Database {
+        constructor() {
+          this.dbName = "workshopDB";
+          this.dbVersion = 3;
+          this.db = null;
+        }
+
+        async init() {
+          return new Promise((resolve, reject) => {
+            const request = indexedDB.open(this.dbName, this.dbVersion);
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => {
+              this.db = request.result;
+              resolve();
+            };
+            request.onupgradeneeded = (e) => {
+              const db = e.target.result;
+              const stores = [
+                {
+                  name: "users",
+                  keyPath: "id",
+                  indexes: [
+                    ["username", "username", { unique: true }],
+                    ["user_type", "user_type", {}],
+                    ["phone", "phone", {}],
+                  ],
+                },
+                {
+                  name: "pumps",
+                  keyPath: "id",
+                  indexes: [
+                    ["customer_id", "customer_id", {}],
+                    ["technician_id", "technician_id", {}],
+                    ["status", "status", {}],
+                  ],
+                },
+                {
+                  name: "spare_parts",
+                  keyPath: "id",
+                  indexes: [
+                    ["pump_id", "pump_id", {}],
+                    ["available", "available", {}],
+                  ],
+                },
+                {
+                  name: "messages",
+                  keyPath: "id",
+                  indexes: [
+                    ["sender_id", "sender_id", {}],
+                    ["receiver_id", "receiver_id", {}],
+                    ["pump_id", "pump_id", {}],
+                  ],
+                },
+                {
+                  name: "notifications",
+                  keyPath: "id",
+                  indexes: [
+                    ["user_id", "user_id", {}],
+                    ["read", "read", {}],
+                    ["type", "type", {}],
+                  ],
+                },
+                {
+                  name: "debts",
+                  keyPath: "id",
+                  indexes: [
+                    ["customer_id", "customer_id", {}],
+                    ["pump_id", "pump_id", {}],
+                  ],
+                },
+                {
+                  name: "debt_payments",
+                  keyPath: "id",
+                  indexes: [["debt_id", "debt_id", {}]],
+                },
+                {
+                  name: "debt_reminders_log",
+                  keyPath: "id",
+                  indexes: [["debt_id", "debt_id", {}]],
+                },
+                { name: "sessions", keyPath: "id" },
+              ];
+              stores.forEach((s) => {
+                if (!db.objectStoreNames.contains(s.name)) {
+                  const store = db.createObjectStore(s.name, {
+                    keyPath: s.keyPath,
+                    autoIncrement: true,
+                  });
+                  s.indexes.forEach((idx) => {
+                    try {
+                      store.createIndex(idx[0], idx[1], idx[2]);
+                    } catch (e) {}
+                  });
+                }
+              });
+            };
+          });
+        }
+
+        _tx(storeName, mode = "readonly") {
+          const tx = this.db.transaction(storeName, mode);
+          return tx.objectStore(storeName);
+        }
+
+        async add(storeName, data) {
+          return new Promise((resolve, reject) => {
+            const store = this._tx(storeName, "readwrite");
+            data.id = Date.now() + Math.random();
+            const req = store.add(data);
+            req.onsuccess = () => resolve(data);
+            req.onerror = () => reject(req.error);
+          });
+        }
+
+        async put(storeName, data) {
+          return new Promise((resolve, reject) => {
+            const store = this._tx(storeName, "readwrite");
+            const req = store.put(data);
+            req.onsuccess = () => resolve(data);
+            req.onerror = () => reject(req.error);
+          });
+        }
+
+        async get(storeName, id) {
+          return new Promise((resolve, reject) => {
+            const store = this._tx(storeName);
+            const req = store.get(id);
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+          });
+        }
+
+        async getAll(storeName) {
+          return new Promise((resolve, reject) => {
+            const store = this._tx(storeName);
+            const req = store.getAll();
+            req.onsuccess = () => resolve(req.result || []);
+            req.onerror = () => reject(req.error);
+          });
+        }
+
+        async getByIndex(storeName, indexName, value) {
+          return new Promise((resolve, reject) => {
+            const store = this._tx(storeName);
+            const index = store.index(indexName);
+            const req = index.getAll(value);
+            req.onsuccess = () => resolve(req.result || []);
+            req.onerror = () => reject(req.error);
+          });
+        }
+
+        async delete(storeName, id) {
+          return new Promise((resolve, reject) => {
+            const store = this._tx(storeName, "readwrite");
+            const req = store.delete(id);
+            req.onsuccess = () => resolve();
+            req.onerror = () => reject(req.error);
+          });
+        }
+
+        async findOne(storeName, predicate) {
+          const all = await this.getAll(storeName);
+          return all.find(predicate);
+        }
+
+        async filter(storeName, predicate) {
+          const all = await this.getAll(storeName);
+          return all.filter(predicate);
+        }
+
+        async count(storeName, predicate) {
+          if (!predicate) {
+            const all = await this.getAll(storeName);
+            return all.length;
+          }
+          const filtered = await this.filter(storeName, predicate);
+          return filtered.length;
+        }
+      }
+
+      const db = new Database();
+
+      // ==========================================
+      // SEED DATA
+      // ==========================================
+      async function seedData() {
+        const usersCount = await db.count("users");
+        if (usersCount > 0) return;
+
+        // Admin
+        await db.add("users", {
+          username: "admin",
+          password: "admin123",
+          name: "المدير العام",
+          phone: "0550000001",
+          user_type: "admin",
+          specialty: "إدارة",
+          experience_years: 10,
+          created_at: new Date().toISOString(),
+        });
+        // Technicians
+        await db.add("users", {
+          username: "tech1",
+          password: "tech123",
+          name: "أحمد الفني",
+          phone: "0550000002",
+          user_type: "technician",
+          specialty: "محركات كهربائية",
+          experience_years: 5,
+          created_at: new Date().toISOString(),
+        });
+        await db.add("users", {
+          username: "tech2",
+          password: "tech123",
+          name: "خالد الفني",
+          phone: "0550000003",
+          user_type: "technician",
+          specialty: "محركات ديزل",
+          experience_years: 8,
+          created_at: new Date().toISOString(),
+        });
+        // Customers
+        const ali = await db.add("users", {
+          username: "ali",
+          password: "123456",
+          name: "علي محمد",
+          phone: "0550000010",
+          user_type: "customer",
+          created_at: new Date().toISOString(),
+        });
+        const sara = await db.add("users", {
+          username: "sara",
+          password: "123456",
+          name: "سارة أحمد",
+          phone: "0550000011",
+          user_type: "customer",
+          created_at: new Date().toISOString(),
+        });
+        const omar = await db.add("users", {
+          username: "omar",
+          password: "123456",
+          name: "عمر حسن",
+          phone: "0550000012",
+          user_type: "customer",
+          created_at: new Date().toISOString(),
+        });
+
+        // Sample pumps
+        const p1 = await db.add("pumps", {
+          name: "محرك مياه 1HP",
+          type: "محرك مياه",
+          power: "1HP",
+          status: "in_progress",
+          customer_id: ali.id,
+          technician_id: (
+            await db.findOne("users", (u) => u.username === "tech1")
+          ).id,
+          fault_description: "المحرك لا يعمل - صوت غير طبيعي",
+          images: [],
+          repair_cost: 0,
+          final_cost: 0,
+          payment_status: "",
+          entry_date: new Date().toISOString(),
+          expected_delivery: new Date(Date.now() + 7 * 86400000).toISOString(),
+          delivered_date: "",
+          created_at: new Date().toISOString(),
+        });
+        const p2 = await db.add("pumps", {
+          name: "محرك طرد مركزي",
+          type: "طرد مركزي",
+          power: "3HP",
+          status: "ready",
+          customer_id: sara.id,
+          technician_id: (
+            await db.findOne("users", (u) => u.username === "tech1")
+          ).id,
+          fault_description: "تسريب زيت من المحرك",
+          images: [],
+          repair_cost: 15000,
+          final_cost: 15000,
+          payment_status: "",
+          entry_date: new Date(Date.now() - 5 * 86400000).toISOString(),
+          expected_delivery: new Date(Date.now() + 2 * 86400000).toISOString(),
+          delivered_date: "",
+          created_at: new Date().toISOString(),
+        });
+        const p3 = await db.add("pumps", {
+          name: "محرك غاطس",
+          type: "غاطسة",
+          power: "5HP",
+          status: "delivered",
+          customer_id: omar.id,
+          technician_id: (
+            await db.findOne("users", (u) => u.username === "tech2")
+          ).id,
+          fault_description: "احتراق الملفات",
+          images: [],
+          repair_cost: 25000,
+          final_cost: 25000,
+          payment_status: "debt",
+          entry_date: new Date(Date.now() - 15 * 86400000).toISOString(),
+          expected_delivery: new Date(Date.now() - 5 * 86400000).toISOString(),
+          delivered_date: new Date(Date.now() - 3 * 86400000).toISOString(),
+          created_at: new Date().toISOString(),
+        });
+
+        // Spare parts
+        await db.add("spare_parts", {
+          pump_id: p1.id,
+          name: "بيرنغ (رولمان)",
+          quantity: 2,
+          price: 1500,
+          available: true,
+        });
+        await db.add("spare_parts", {
+          pump_id: p1.id,
+          name: "مكثف كهربائي",
+          quantity: 1,
+          price: 2000,
+          available: false,
+        });
+        await db.add("spare_parts", {
+          pump_id: p2.id,
+          name: "جوان ميكانيكي",
+          quantity: 1,
+          price: 3500,
+          available: true,
+        });
+        await db.add("spare_parts", {
+          pump_id: p3.id,
+          name: "ملفات نحاسية",
+          quantity: 1,
+          price: 8000,
+          available: true,
+        });
+
+        // Debt for omar
+        await db.add("debts", {
+          customer_id: omar.id,
+          pump_id: p3.id,
+          total_amount: 25000,
+          paid_amount: 10000,
+          remaining_amount: 15000,
+          reminder_frequency: "weekly",
+          reminder_day: 1,
+          reminder_enabled: true,
+          last_reminder_date: "",
+          next_reminder_date: getNextReminderDate("weekly", 1),
+          created_at: new Date().toISOString(),
+        });
+        await db.add("debt_payments", {
+          debt_id: null,
+          amount: 10000,
+          date: new Date(Date.now() - 2 * 86400000).toISOString(),
+          note: "دفعة أولى",
+        });
+
+        // Notifications
+        await db.add("notifications", {
+          user_id: ali.id,
+          title: "محرك قيد التصليح",
+          message: "تم بدء تصليح محرك مياه 1HP",
+          type: "info",
+          priority: "normal",
+          icon: "fa-wrench",
+          read: false,
+          created_at: new Date().toISOString(),
+        });
+        await db.add("notifications", {
+          user_id: sara.id,
+          title: "محرك جاهز للاستلام",
+          message: "محرك طرد مركزي جاهز للاستلام",
+          type: "success",
+          priority: "high",
+          icon: "fa-check-circle",
+          read: false,
+          created_at: new Date().toISOString(),
+        });
+        await db.add("notifications", {
+          user_id: omar.id,
+          title: "تذكير بالدين",
+          message: "لديك دين مستحق بقيمة 15,000 د.ج",
+          type: "warning",
+          priority: "urgent",
+          icon: "fa-money-bill-wave",
+          read: false,
+          created_at: new Date().toISOString(),
+        });
+
+        console.log("Seed data inserted");
+      }
+
+      function getNextReminderDate(frequency, day) {
+        const now = new Date();
+        if (frequency === "weekly") {
+          const d = new Date(now);
+          d.setDate(d.getDate() + ((day - d.getDay() + 7) % 7 || 7));
+          return d.toISOString();
+        } else if (frequency === "monthly") {
+          const d = new Date(now.getFullYear(), now.getMonth(), day);
+          if (d <= now) d.setMonth(d.getMonth() + 1);
+          return d.toISOString();
+        }
+        return "";
+      }
+
+      // ==========================================
+      // SESSION MANAGEMENT
+      // ==========================================
+      let currentUser = null;
+
+      function saveSession(user) {
+        currentUser = user;
+        localStorage.setItem("workshop_session", JSON.stringify(user));
+      }
+
+      function loadSession() {
+        const data = localStorage.getItem("workshop_session");
+        if (data) {
+          currentUser = JSON.parse(data);
+          return true;
+        }
+        return false;
+      }
+
+      function clearSession() {
+        currentUser = null;
+        localStorage.removeItem("workshop_session");
+      }
+
+      // ==========================================
+      // TOAST NOTIFICATIONS
+      // ==========================================
+      function showToast(message, type = "info") {
+        const container = document.getElementById("toastContainer");
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        const icons = {
+          success: "fa-check-circle",
+          error: "fa-times-circle",
+          warning: "fa-exclamation-triangle",
+          info: "fa-info-circle",
+        };
+        toast.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i> ${message}`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.remove();
+        }, 3500);
+      }
+
+      // ==========================================
+      // UTILITY FUNCTIONS
+      // ==========================================
+      function formatDate(dateStr) {
+        if (!dateStr) return "-";
+        const d = new Date(dateStr);
+        return d.toLocaleDateString("ar-DZ", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+      }
+
+      function formatDateTime(dateStr) {
+        if (!dateStr) return "-";
+        const d = new Date(dateStr);
+        return d.toLocaleDateString("ar-DZ", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      function formatMoney(amount) {
+        return Number(amount || 0).toLocaleString("ar-DZ") + " " + CURRENCY;
+      }
+
+      function statusText(status) {
+        const map = {
+          unrepaired: "غير مصلح",
+          in_progress: "قيد التصليح",
+          ready: "جاهز للاستلام",
+          delivered: "تم التسليم",
+        };
+        return map[status] || status;
+      }
+
+      function statusClass(status) {
+        return status;
+      }
+
+      function dayName(dayNum) {
+        const days = [
+          "الأحد",
+          "الإثنين",
+          "الثلاثاء",
+          "الأربعاء",
+          "الخميس",
+          "الجمعة",
+          "السبت",
+        ];
+        return days[dayNum] || "";
+      }
+
+      // ==========================================
+      // NOTIFICATION POLLING
+      // ==========================================
+      let notifInterval = null;
+      async function startNotifPolling() {
+        if (notifInterval) clearInterval(notifInterval);
+        updateNotifBell();
+        notifInterval = setInterval(updateNotifBell, 15000);
+      }
+
+      async function updateNotifBell() {
+        if (!currentUser) return;
+        const notifs = await db.filter(
+          "notifications",
+          (n) => n.user_id === currentUser.id && !n.read,
+        );
+        const countEl = document.querySelector(".notif-count");
+        if (countEl) {
+          if (notifs.length > 0) {
+            countEl.textContent = notifs.length;
+            countEl.classList.add("show");
+          } else {
+            countEl.classList.remove("show");
+          }
+        }
+        // Also update sidebar badge for messages
+        const msgs = await db.filter(
+          "messages",
+          (m) => m.receiver_id === currentUser.id && !m.read,
+        );
+        const msgBadge = document.querySelector(".msg-badge");
+        if (msgBadge) {
+          if (msgs.length > 0) {
+            msgBadge.textContent = msgs.length;
+            msgBadge.style.display = "block";
+          } else {
+            msgBadge.style.display = "none";
+          }
+        }
+      }
+
+      // ==========================================
+      // DEBT REMINDER PROCESSING
+      // ==========================================
+      async function processReminders() {
+        const debts = await db.filter(
+          "debts",
+          (d) =>
+            d.reminder_enabled &&
+            d.remaining_amount > 0 &&
+            d.next_reminder_date,
+        );
+        const now = new Date();
+        for (const debt of debts) {
+          if (new Date(debt.next_reminder_date) <= now) {
+            const customer = await db.get("users", debt.customer_id);
+            // Send notification
+            await db.add("notifications", {
+              user_id: debt.customer_id,
+              title: "تذكير بالدين المستحق",
+              message: `لديك دين مستحق بقيمة ${formatMoney(debt.remaining_amount)}. يرجى التسديد في أقرب وقت.`,
+              type: "warning",
+              priority: "urgent",
+              icon: "fa-money-bill-wave",
+              read: false,
+              created_at: new Date().toISOString(),
+            });
+            // Log
+            await db.add("debt_reminders_log", {
+              debt_id: debt.id,
+              type: debt.reminder_frequency,
+              date: new Date().toISOString(),
+              remaining_amount: debt.remaining_amount,
+            });
+            // Update next reminder
+            debt.last_reminder_date = new Date().toISOString();
+            debt.next_reminder_date = getNextReminderDate(
+              debt.reminder_frequency,
+              debt.reminder_day,
+            );
+            await db.put("debts", debt);
+          }
+        }
+      }
+
+      // ==========================================
+      // ROUTER
+      // ==========================================
+      let currentPage = "login";
+
+      function navigate(page) {
+        currentPage = page;
+        render();
+      }
+
+      // ==========================================
+      // MAIN RENDER
+      // ==========================================
+      function render() {
+        const app = document.getElementById("app");
+        if (!currentUser) {
+          app.innerHTML = renderLoginPage();
+          attachLoginEvents();
+          return;
+        }
+        if (currentUser.user_type === "customer") {
+          renderCustomerApp();
+        } else {
+          renderTechAdminApp();
+        }
+        startNotifPolling();
+      }
+
+      // ==========================================
+      // LOGIN PAGE
+      // ==========================================
+      function renderLoginPage() {
+        return `
+        <div class="login-page">
+            <div class="login-container">
+                <div class="login-logo">
+                    <i class="fas fa-cogs"></i>
+                    <h1>${APP_NAME}</h1>
+                    <p>نظام إدارة تصليح المحركات</p>
+                </div>
+
+                <div class="login-tabs">
+                    <button class="login-tab active" data-tab="login" onclick="switchLoginTab('login')">تسجيل الدخول</button>
+                    <button class="login-tab" data-tab="register" onclick="switchLoginTab('register')">حساب جديد</button>
+                </div>
+
+                <!-- Login Form -->
+                <div id="loginForm">
+                    <div class="form-group">
+                        <label>نوع الحساب</label>
+                        <select id="loginType">
+                            <option value="customer">زبون</option>
+                            <option value="technician">فني</option>
+                            <option value="admin">مدير</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>اسم المستخدم</label>
+                        <input type="text" id="loginUsername" placeholder="أدخل اسم المستخدم">
+                    </div>
+                    <div class="form-group">
+                        <label>كلمة المرور</label>
+                        <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور">
+                    </div>
+                    <button class="btn btn-primary btn-full" onclick="handleLogin()">
+                        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                    </button>
+                </div>
+
+                <!-- Register Form -->
+                <div id="registerForm" class="hidden">
+                    <div class="form-group">
+                        <label>نوع الحساب</label>
+                        <select id="regType" onchange="toggleRegFields()">
+                            <option value="customer">زبون</option>
+                            <option value="technician">فني</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الاسم الكامل</label>
+                        <input type="text" id="regName" placeholder="أدخل اسمك الكامل">
+                    </div>
+                    <div class="form-group">
+                        <label>رقم الهاتف</label>
+                        <input type="tel" id="regPhone" placeholder="05XXXXXXXX">
+                    </div>
+                    <div class="form-group">
+                        <label>اسم المستخدم</label>
+                        <input type="text" id="regUsername" placeholder="اختر اسم مستخدم">
+                    </div>
+                    <div class="form-group">
+                        <label>كلمة المرور</label>
+                        <input type="password" id="regPassword" placeholder="أدخل كلمة المرور">
+                    </div>
+                    <div id="techFields" class="hidden">
+                        <div class="form-group">
+                            <label>التخصص</label>
+                            <input type="text" id="regSpecialty" placeholder="مثال: محركات كهربائية">
+                        </div>
+                        <div class="form-group">
+                            <label>سنوات الخبرة</label>
+                            <input type="number" id="regExperience" placeholder="0" min="0">
+                        </div>
+                    </div>
+                    <button class="btn btn-success btn-full" onclick="handleRegister()">
+                        <i class="fas fa-user-plus"></i> إنشاء حساب
+                    </button>
+                </div>
+            </div>
+        </div>`;
+      }
+
+      window.switchLoginTab = function (tab) {
+        document
+          .querySelectorAll(".login-tab")
+          .forEach((t) => t.classList.remove("active"));
+        document
+          .querySelector(`.login-tab[data-tab="${tab}"]`)
+          .classList.add("active");
+        document
+          .getElementById("loginForm")
+          .classList.toggle("hidden", tab !== "login");
+        document
+          .getElementById("registerForm")
+          .classList.toggle("hidden", tab !== "register");
+      };
+
+      window.toggleRegFields = function () {
+        const type = document.getElementById("regType").value;
+        document
+          .getElementById("techFields")
+          .classList.toggle("hidden", type !== "technician");
+      };
+
+      function attachLoginEvents() {
+        document.addEventListener("keydown", function handler(e) {
+          if (e.key === "Enter" && !currentUser) {
+            const loginVisible = !document
+              .getElementById("loginForm")
+              ?.classList.contains("hidden");
+            if (loginVisible) handleLogin();
+            else handleRegister();
+          }
+        });
+      }
+
+      window.handleLogin = async function () {
+        const username = document.getElementById("loginUsername").value.trim();
+        const password = document.getElementById("loginPassword").value.trim();
+        const userType = document.getElementById("loginType").value;
+        if (!username || !password) {
+          showToast("يرجى ملء جميع الحقول", "warning");
+          return;
+        }
+        const user = await db.findOne(
+          "users",
+          (u) =>
+            u.username === username &&
+            u.password === password &&
+            u.user_type === userType,
+        );
+        if (!user) {
+          showToast("بيانات الدخول غير صحيحة", "error");
+          return;
+        }
+        saveSession(user);
+        currentPage = "dashboard";
+        showToast(`مرحباً ${user.name}`, "success");
+        render();
+      };
+
+      window.handleRegister = async function () {
+        const type = document.getElementById("regType").value;
+        const name = document.getElementById("regName").value.trim();
+        const phone = document.getElementById("regPhone").value.trim();
+        const username = document.getElementById("regUsername").value.trim();
+        const password = document.getElementById("regPassword").value.trim();
+        if (!name || !phone || !username || !password) {
+          showToast("يرجى ملء جميع الحقول", "warning");
+          return;
+        }
+        const exists = await db.findOne(
+          "users",
+          (u) => u.username === username,
+        );
+        if (exists) {
+          showToast("اسم المستخدم موجود مسبقاً", "error");
+          return;
+        }
+        const userData = {
+          username,
+          password,
+          name,
+          phone,
+          user_type: type,
+          created_at: new Date().toISOString(),
+        };
+        if (type === "technician") {
+          userData.specialty =
+            document.getElementById("regSpecialty").value.trim() || "";
+          userData.experience_years =
+            parseInt(document.getElementById("regExperience").value) || 0;
+        }
+        await db.add("users", userData);
+        showToast("تم إنشاء الحساب بنجاح", "success");
+        switchLoginTab("login");
+      };
+
+      // ==========================================
+      // CUSTOMER APP
+      // ==========================================
+      function renderCustomerApp() {
+        const app = document.getElementById("app");
+        app.innerHTML = `
+        <button class="mobile-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="app-layout">
+            <nav class="sidebar">
+                <div class="sidebar-header">
+                    <h2><i class="fas fa-cogs"></i> ${APP_NAME}</h2>
+                    <p>لوحة تحكم الزبون</p>
+                </div>
+                <div class="nav-item ${currentPage === "dashboard" ? "active" : ""}" onclick="navigate('dashboard')">
+                    <i class="fas fa-home"></i> الرئيسية
+                </div>
+                <div class="nav-item ${currentPage === "my-pumps" ? "active" : ""}" onclick="navigate('my-pumps')">
+                    <i class="fas fa-cog"></i> محركاتي
+                </div>
+                <div class="nav-item ${currentPage === "my-debts" ? "active" : ""}" onclick="navigate('my-debts')">
+                    <i class="fas fa-file-invoice-dollar"></i> ديوني
+                </div>
+                <div class="nav-item ${currentPage === "messages" ? "active" : ""}" onclick="navigate('messages')">
+                    <i class="fas fa-comments"></i> الرسائل
+                    <span class="badge msg-badge" style="display:none">0</span>
+                </div>
+                <div class="nav-item ${currentPage === "notifications-page" ? "active" : ""}" onclick="navigate('notifications-page')">
+                    <i class="fas fa-bell"></i> الإشعارات
+                </div>
+                <div class="sidebar-footer">
+                    <div class="user-info">
+                        <div class="user-avatar">${currentUser.name.charAt(0)}</div>
+                        <div class="user-details">
+                            <h4>${currentUser.name}</h4>
+                            <p>زبون</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-danger btn-sm btn-full" onclick="handleLogout()">
+                        <i class="fas fa-sign-out-alt"></i> خروج
+                    </button>
+                </div>
+            </nav>
+            <main class="main-content">
+                <div class="top-header">
+                    <h1 id="pageTitle">الرئيسية</h1>
+                    <div class="header-actions">
+                        <div class="notification-bell" onclick="toggleNotifDropdown()" style="position:relative;">
+                            <i class="fas fa-bell"></i>
+                            <span class="notif-count">0</span>
+                            <div class="notif-dropdown" id="notifDropdown"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="pageContent"></div>
+            </main>
+        </div>`;
+        loadCustomerPage();
+      }
+
+      async function loadCustomerPage() {
+        const content = document.getElementById("pageContent");
+        const title = document.getElementById("pageTitle");
+        switch (currentPage) {
+          case "dashboard":
+            title.textContent = "الرئيسية";
+            await renderCustomerDashboard(content);
+            break;
+          case "my-pumps":
+            title.textContent = "محركاتي";
+            await renderCustomerPumps(content);
+            break;
+          case "my-debts":
+            title.textContent = "ديوني";
+            await renderCustomerDebts(content);
+            break;
+          case "messages":
+            title.textContent = "الرسائل";
+            await renderMessages(content);
+            break;
+          case "notifications-page":
+            title.textContent = "الإشعارات";
+            await renderNotificationsPage(content);
+            break;
+          default:
+            title.textContent = "الرئيسية";
+            await renderCustomerDashboard(content);
+        }
+      }
+
+      async function renderCustomerDashboard(el) {
+        const pumps = await db.filter(
+          "pumps",
+          (p) => p.customer_id === currentUser.id,
+        );
+        const ready = pumps.filter((p) => p.status === "ready").length;
+        const inProgress = pumps.filter(
+          (p) => p.status === "in_progress" || p.status === "unrepaired",
+        ).length;
+        const delivered = pumps.filter((p) => p.status === "delivered").length;
+        const debts = await db.filter(
+          "debts",
+          (d) => d.customer_id === currentUser.id && d.remaining_amount > 0,
+        );
+        const totalDebt = debts.reduce((s, d) => s + d.remaining_amount, 0);
+
+        el.innerHTML = `
+        <div class="customer-sections">
+            <div class="customer-section green" onclick="navigate('my-pumps')" style="cursor:pointer">
+                <div class="section-header">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>جاهزة للاستلام</h3>
+                </div>
+                <div class="section-count">${ready}</div>
+                <p style="color:var(--text-muted);font-size:13px;">محركات جاهزة</p>
+            </div>
+            <div class="customer-section red" onclick="navigate('my-pumps')" style="cursor:pointer">
+                <div class="section-header">
+                    <i class="fas fa-wrench"></i>
+                    <h3>قيد التصليح</h3>
+                </div>
+                <div class="section-count">${inProgress}</div>
+                <p style="color:var(--text-muted);font-size:13px;">محركات في الورشة</p>
+            </div>
+            <div class="customer-section blue" onclick="navigate('my-pumps')" style="cursor:pointer">
+                <div class="section-header">
+                    <i class="fas fa-history"></i>
+                    <h3>سجل المحركات</h3>
+                </div>
+                <div class="section-count">${delivered}</div>
+                <p style="color:var(--text-muted);font-size:13px;">تم التسليم</p>
+            </div>
+            <div class="customer-section orange" onclick="navigate('my-debts')" style="cursor:pointer">
+                <div class="section-header">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h3>الديون المستحقة</h3>
+                </div>
+                <div class="section-count">${formatMoney(totalDebt)}</div>
+                <p style="color:var(--text-muted);font-size:13px;">${debts.length} دين مستحق</p>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:20px;">
+            <div class="card-header"><h3><i class="fas fa-clock" style="color:var(--accent-blue);margin-left:8px;"></i> آخر التحديثات</h3></div>
+            <div id="recentUpdates"></div>
+        </div>`;
+
+        // Recent notifications
+        const notifs = (
+          await db.filter("notifications", (n) => n.user_id === currentUser.id)
+        )
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          .slice(0, 5);
+        const updatesEl = document.getElementById("recentUpdates");
+        if (notifs.length === 0) {
+          updatesEl.innerHTML =
+            '<div class="empty-state"><p>لا توجد تحديثات</p></div>';
+        } else {
+          updatesEl.innerHTML = notifs
+            .map(
+              (n) => `
+                <div class="pump-item">
+                    <div class="pump-info">
+                        <h4><i class="fas ${n.icon || "fa-bell"}" style="margin-left:8px;color:var(--accent-blue);"></i> ${n.title}</h4>
+                        <p>${n.message}</p>
+                    </div>
+                    <span style="font-size:12px;color:var(--text-muted);">${formatDateTime(n.created_at)}</span>
+                </div>
+            `,
+            )
+            .join("");
+        }
+      }
+
+      async function renderCustomerPumps(el) {
+        const pumps = await db.filter(
+          "pumps",
+          (p) => p.customer_id === currentUser.id,
+        );
+        const ready = pumps.filter((p) => p.status === "ready");
+        const inProgress = pumps.filter(
+          (p) => p.status === "in_progress" || p.status === "unrepaired",
+        );
+        const delivered = pumps.filter((p) => p.status === "delivered");
+
+        function pumpCard(p) {
+          return `
+            <div class="pump-item" onclick="showPumpDetail(${p.id})" style="cursor:pointer">
+                <div class="pump-info">
+                    <h4>${p.name}</h4>
+                    <p>${p.type} - ${p.power || ""}</p>
+                    <p style="font-size:11px;">${formatDate(p.entry_date)}</p>
+                </div>
+                <span class="status-badge ${statusClass(p.status)}">${statusText(p.status)}</span>
+            </div>`;
+        }
+
+        el.innerHTML = `
+        <div class="customer-sections">
+            <div class="customer-section green">
+                <div class="section-header"><i class="fas fa-check-circle"></i><h3>جاهزة للاستلام (${ready.length})</h3></div>
+                ${ready.length ? ready.map(pumpCard).join("") : '<p style="color:var(--text-muted);text-align:center;padding:20px;">لا يوجد</p>'}
+            </div>
+            <div class="customer-section red">
+                <div class="section-header"><i class="fas fa-wrench"></i><h3>قيد التصليح (${inProgress.length})</h3></div>
+                ${inProgress.length ? inProgress.map(pumpCard).join("") : '<p style="color:var(--text-muted);text-align:center;padding:20px;">لا يوجد</p>'}
+            </div>
+            <div class="customer-section blue">
+                <div class="section-header"><i class="fas fa-history"></i><h3>سجل المحركات (${delivered.length})</h3></div>
+                ${delivered.length ? delivered.map(pumpCard).join("") : '<p style="color:var(--text-muted);text-align:center;padding:20px;">لا يوجد</p>'}
+            </div>
+        </div>`;
+      }
+
+      async function renderCustomerDebts(el) {
+        const debts = await db.filter(
+          "debts",
+          (d) => d.customer_id === currentUser.id,
+        );
+        const activeDebts = debts.filter((d) => d.remaining_amount > 0);
+        const totalRemaining = activeDebts.reduce(
+          (s, d) => s + d.remaining_amount,
+          0,
+        );
+
+        let reminderBanner = "";
+        const withReminder = activeDebts.find((d) => d.reminder_enabled);
+        if (withReminder) {
+          reminderBanner = `
+            <div class="reminder-banner">
+                <i class="fas fa-bell"></i>
+                <div class="banner-text">
+                    <h4>تذكير نشط</h4>
+                    <p>سيتم تذكيرك ${withReminder.reminder_frequency === "weekly" ? "أسبوعياً يوم " + dayName(withReminder.reminder_day) : "شهرياً يوم " + withReminder.reminder_day} - الإرسال القادم: ${formatDate(withReminder.next_reminder_date)}</p>
+                </div>
+            </div>`;
+        }
+
+        el.innerHTML = `
+        ${reminderBanner}
+        <div class="stats-grid">
+            <div class="stat-card orange">
+                <div class="stat-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                <div class="stat-value">${formatMoney(totalRemaining)}</div>
+                <div class="stat-label">إجمالي الديون المتبقية</div>
+            </div>
+            <div class="stat-card blue">
+                <div class="stat-icon"><i class="fas fa-receipt"></i></div>
+                <div class="stat-value">${activeDebts.length}</div>
+                <div class="stat-label">عدد الديون النشطة</div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h3>تفاصيل الديون</h3></div>
+            ${
+              activeDebts.length === 0
+                ? '<div class="empty-state"><i class="fas fa-check-circle"></i><p>لا توجد ديون مستحقة</p></div>'
+                : activeDebts
+                    .map((d) => {
+                      const pct = Math.round(
+                        (d.paid_amount / d.total_amount) * 100,
+                      );
+                      return `
+                <div class="pump-item" style="flex-direction:column;align-items:stretch;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div>
+                            <h4 style="font-size:14px;font-weight:700;">دين بقيمة ${formatMoney(d.total_amount)}</h4>
+                            <p style="font-size:12px;color:var(--text-muted);">المدفوع: ${formatMoney(d.paid_amount)} | المتبقي: ${formatMoney(d.remaining_amount)}</p>
+                        </div>
+                        <span class="status-badge ${d.remaining_amount > 0 ? "unrepaired" : "ready"}">${d.remaining_amount > 0 ? "مستحق" : "مسدد"}</span>
+                    </div>
+                    <div class="progress-bar" style="margin-top:8px;">
+                        <div class="progress-fill green" style="width:${pct}%"></div>
+                    </div>
+                    <p style="font-size:11px;color:var(--text-muted);margin-top:4px;">تم السداد ${pct}%</p>
+                </div>`;
+                    })
+                    .join("")
+            }
+        </div>`;
+      }
+
+      // ==========================================
+      // TECH/ADMIN APP
+      // ==========================================
+      function renderTechAdminApp() {
+        const isAdmin = currentUser.user_type === "admin";
+        const app = document.getElementById("app");
+        app.innerHTML = `
+        <button class="mobile-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="app-layout">
+            <nav class="sidebar">
+                <div class="sidebar-header">
+                    <h2><i class="fas fa-cogs"></i> ${APP_NAME}</h2>
+                    <p>${isAdmin ? "لوحة تحكم المدير" : "لوحة تحكم الفني"}</p>
+                </div>
+                <div class="nav-item ${currentPage === "dashboard" ? "active" : ""}" onclick="navigate('dashboard')">
+                    <i class="fas fa-chart-line"></i> لوحة الإحصائيات
+                </div>
+                <div class="nav-item ${currentPage === "add-pump" ? "active" : ""}" onclick="navigate('add-pump')">
+                    <i class="fas fa-plus-circle"></i> إضافة محرك
+                </div>
+                <div class="nav-item ${currentPage === "pump-list" ? "active" : ""}" onclick="navigate('pump-list')">
+                    <i class="fas fa-list"></i> قائمة المحركات
+                </div>
+                <div class="nav-item ${currentPage === "missing-parts" ? "active" : ""}" onclick="navigate('missing-parts')">
+                    <i class="fas fa-exclamation-triangle"></i> قطع غيار ناقصة
+                </div>
+                <div class="nav-item ${currentPage === "debts-mgmt" ? "active" : ""}" onclick="navigate('debts-mgmt')">
+                    <i class="fas fa-hand-holding-usd"></i> إدارة الديون
+                </div>
+                <div class="nav-item ${currentPage === "messages" ? "active" : ""}" onclick="navigate('messages')">
+                    <i class="fas fa-comments"></i> الرسائل
+                    <span class="badge msg-badge" style="display:none">0</span>
+                </div>
+                <div class="nav-item ${currentPage === "notifications-page" ? "active" : ""}" onclick="navigate('notifications-page')">
+                    <i class="fas fa-bell"></i> الإشعارات
+                </div>
+                ${
+                  isAdmin
+                    ? `
+                <div class="nav-item ${currentPage === "manage-users" ? "active" : ""}" onclick="navigate('manage-users')">
+                    <i class="fas fa-users-cog"></i> إدارة المستخدمين
+                </div>
+                <div class="nav-item ${currentPage === "reports" ? "active" : ""}" onclick="navigate('reports')">
+                    <i class="fas fa-chart-bar"></i> التقارير
+                </div>`
+                    : ""
+                }
+                <div class="sidebar-footer">
+                    <div class="user-info">
+                        <div class="user-avatar">${currentUser.name.charAt(0)}</div>
+                        <div class="user-details">
+                            <h4>${currentUser.name}</h4>
+                            <p>${isAdmin ? "مدير" : "فني"}</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-danger btn-sm btn-full" onclick="handleLogout()">
+                        <i class="fas fa-sign-out-alt"></i> خروج
+                    </button>
+                </div>
+            </nav>
+            <main class="main-content">
+                <div class="top-header">
+                    <h1 id="pageTitle">لوحة الإحصائيات</h1>
+                    <div class="header-actions">
+                        <div class="notification-bell" onclick="toggleNotifDropdown()" style="position:relative;">
+                            <i class="fas fa-bell"></i>
+                            <span class="notif-count">0</span>
+                            <div class="notif-dropdown" id="notifDropdown"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="pageContent"></div>
+            </main>
+        </div>
+        <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+            <div class="modal" id="modalContent"></div>
+        </div>`;
+        loadTechAdminPage();
+      }
+
+      async function loadTechAdminPage() {
+        const content = document.getElementById("pageContent");
+        const title = document.getElementById("pageTitle");
+        switch (currentPage) {
+          case "dashboard":
+            title.textContent = "لوحة الإحصائيات";
+            await renderAdminDashboard(content);
+            break;
+          case "add-pump":
+            title.textContent = "إضافة محرك جديد";
+            await renderAddPump(content);
+            break;
+          case "pump-list":
+            title.textContent = "قائمة المحركات";
+            await renderPumpList(content);
+            break;
+          case "missing-parts":
+            title.textContent = "قطع الغيار الناقصة";
+            await renderMissingParts(content);
+            break;
+          case "debts-mgmt":
+            title.textContent = "إدارة الديون";
+            await renderDebtsMgmt(content);
+            break;
+          case "messages":
+            title.textContent = "الرسائل";
+            await renderMessages(content);
+            break;
+          case "notifications-page":
+            title.textContent = "الإشعارات";
+            await renderNotificationsPage(content);
+            break;
+          case "manage-users":
+            title.textContent = "إدارة المستخدمين";
+            await renderManageUsers(content);
+            break;
+          case "reports":
+            title.textContent = "التقارير والإحصائيات";
+            await renderReports(content);
+            break;
+          default:
+            title.textContent = "لوحة الإحصائيات";
+            await renderAdminDashboard(content);
+        }
+      }
+
+      // ==========================================
+      // ADMIN DASHBOARD
+      // ==========================================
+      async function renderAdminDashboard(el) {
+        const pumps = await db.getAll("pumps");
+        const customers = await db.filter(
+          "users",
+          (u) => u.user_type === "customer",
+        );
+        const debts = await db.getAll("debts");
+        const totalDebt = debts.reduce((s, d) => s + d.remaining_amount, 0);
+        const unrepaired = pumps.filter(
+          (p) => p.status === "unrepaired",
+        ).length;
+        const inProg = pumps.filter((p) => p.status === "in_progress").length;
+        const ready = pumps.filter((p) => p.status === "ready").length;
+        const delivered = pumps.filter((p) => p.status === "delivered").length;
+        const missingParts = await db.filter(
+          "spare_parts",
+          (sp) => !sp.available,
+        );
+
+        el.innerHTML = `
+        <div class="stats-grid">
+            <div class="stat-card blue">
+                <div class="stat-icon"><i class="fas fa-cogs"></i></div>
+                <div class="stat-value">${pumps.length}</div>
+                <div class="stat-label">إجمالي المحركات</div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-icon"><i class="fas fa-wrench"></i></div>
+                <div class="stat-value">${unrepaired + inProg}</div>
+                <div class="stat-label">قيد التصليح</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-value">${ready}</div>
+                <div class="stat-label">جاهزة للاستلام</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-value">${customers.length}</div>
+                <div class="stat-label">الزبائن</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+                <div class="stat-value">${formatMoney(totalDebt)}</div>
+                <div class="stat-label">إجمالي الديون</div>
+            </div>
+            <div class="stat-card yellow">
+                <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="stat-value">${missingParts.length}</div>
+                <div class="stat-label">قطع غيار ناقصة</div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-header"><h3><i class="fas fa-clock" style="color:var(--accent-yellow);margin-left:8px;"></i> آخر المحركات المضافة</h3></div>
+                <div id="recentPumps"></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3><i class="fas fa-exclamation-circle" style="color:var(--accent-red);margin-left:8px;"></i> ديون مستحقة</h3></div>
+                <div id="recentDebts"></div>
+            </div>
+        </div>`;
+
+        const recentPumps = pumps
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          .slice(0, 5);
+        const pumpsEl = document.getElementById("recentPumps");
+        for (const p of recentPumps) {
+          const cust = await db.get("users", p.customer_id);
+          pumpsEl.innerHTML += `
+            <div class="pump-item">
+                <div class="pump-info">
+                    <h4>${p.name}</h4>
+                    <p>${cust ? cust.name : "غير معروف"} - ${p.type}</p>
+                </div>
+                <span class="status-badge ${statusClass(p.status)}">${statusText(p.status)}</span>
+            </div>`;
+        }
+
+        const activeDebts = debts
+          .filter((d) => d.remaining_amount > 0)
+          .slice(0, 5);
+        const debtsEl = document.getElementById("recentDebts");
+        if (activeDebts.length === 0) {
+          debtsEl.innerHTML =
+            '<div class="empty-state"><p>لا توجد ديون</p></div>';
+        } else {
+          for (const d of activeDebts) {
+            const cust = await db.get("users", d.customer_id);
+            debtsEl.innerHTML += `
+                <div class="pump-item">
+                    <div class="pump-info">
+                        <h4>${cust ? cust.name : "غير معروف"}</h4>
+                        <p>المتبقي: ${formatMoney(d.remaining_amount)}</p>
+                    </div>
+                    <span class="status-badge unrepaired">مستحق</span>
+                </div>`;
+          }
+        }
+      }
+
+      // ==========================================
+      // ADD PUMP
+      // ==========================================
+      async function renderAddPump(el) {
+        const customers = await db.filter(
+          "users",
+          (u) => u.user_type === "customer",
+        );
+        el.innerHTML = `
+        <div class="card">
+            <div class="card-header"><h3><i class="fas fa-plus-circle" style="color:var(--accent-green);margin-left:8px;"></i> بيانات المحرك الجديد</h3></div>
+
+            <div class="form-group" style="position:relative;">
+                <label>البحث عن الزبون</label>
+                <input type="text" id="customerSearch" placeholder="ابحث باسم الزبون..." autocomplete="off" oninput="searchCustomers()">
+                <div class="autocomplete-list" id="customerAutocomplete"></div>
+                <input type="hidden" id="selectedCustomerId">
+                <div id="selectedCustomerInfo" class="hidden" style="margin-top:8px;padding:8px 12px;background:rgba(16,185,129,0.1);border-radius:8px;border:1px solid rgba(16,185,129,0.3);">
+                    <span id="selectedCustomerName" style="font-weight:600;color:var(--accent-green);"></span>
+                    <span id="selectedCustomerPhone" style="margin-right:10px;color:var(--text-muted);font-size:13px;"></span>
+                </div>
+            </div>
+
+            <div style="text-align:center;margin:10px 0;">
+                <button class="btn btn-secondary btn-sm" onclick="showAddCustomerInline()">
+                    <i class="fas fa-user-plus"></i> إضافة زبون جديد
+                </button>
+            </div>
+
+            <div id="newCustomerForm" class="hidden" style="background:var(--bg-primary);padding:15px;border-radius:10px;margin-bottom:15px;">
+                <h4 style="margin-bottom:10px;font-size:14px;"><i class="fas fa-user-plus" style="color:var(--accent-blue);margin-left:5px;"></i> زبون جديد</h4>
+                <div class="grid-2">
+                    <div class="form-group"><label>الاسم</label><input type="text" id="newCustName"></div>
+                    <div class="form-group"><label>الهاتف</label><input type="tel" id="newCustPhone"></div>
+                    <div class="form-group"><label>اسم المستخدم</label><input type="text" id="newCustUsername"></div>
+                    <div class="form-group"><label>كلمة المرور</label><input type="password" id="newCustPassword"></div>
+                </div>
+                <button class="btn btn-success btn-sm" onclick="addInlineCustomer()"><i class="fas fa-check"></i> حفظ الزبون</button>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>اسم المحرك</label>
+                    <input type="text" id="pumpName" placeholder="مثال: محرك مياه 1HP">
+                </div>
+                <div class="form-group">
+                    <label>نوع المحرك</label>
+                    <select id="pumpType">
+                        <option value="">اختر النوع</option>
+                        <option value="محرك مياه">محرك مياه</option>
+                        <option value="طرد مركزي">طرد مركزي</option>
+                        <option value="غاطسة">غاطسة</option>
+                        <option value="محرك ري">محرك ري</option>
+                        <option value="ضغط عالي">ضغط عالي</option>
+                        <option value="محرك كهربائي">محرك كهربائي</option>
+                        <option value="محرك ديزل">محرك ديزل</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>القوة</label>
+                    <input type="text" id="pumpPower" placeholder="مثال: 2HP">
+                </div>
+                <div class="form-group">
+                    <label>تاريخ التسليم المتوقع</label>
+                    <input type="date" id="pumpDeliveryDate">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>وصف العطل</label>
+                <textarea id="pumpFault" placeholder="اوصف العطل بالتفصيل..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>صورة المحرك (اختياري)</label>
+                <input type="file" id="pumpImage" accept="image/*" onchange="previewImage(event)" style="padding:8px;">
+                <img id="imagePreview" class="img-preview hidden">
+            </div>
+
+            <h4 style="margin:20px 0 10px;font-size:15px;"><i class="fas fa-tools" style="color:var(--accent-purple);margin-left:5px;"></i> قطع الغيار</h4>
+            <div id="sparePartsList"></div>
+            <button class="btn btn-secondary btn-sm" onclick="addSparePartField()" style="margin-bottom:20px;">
+                <i class="fas fa-plus"></i> إضافة قطعة غيار
+            </button>
+
+            <div style="text-align:center;padding-top:15px;border-top:1px solid var(--border-color);">
+                <button class="btn btn-primary" onclick="savePump()" style="min-width:200px;">
+                    <i class="fas fa-save"></i> حفظ المحرك
+                </button>
+            </div>
+        </div>`;
+      }
+
+      let sparePartsFields = [];
+      window.addSparePartField = function () {
+        const idx = sparePartsFields.length;
+        sparePartsFields.push(idx);
+        const container = document.getElementById("sparePartsList");
+        const div = document.createElement("div");
+        div.className = "spare-part-item";
+        div.id = `sp_${idx}`;
+        div.innerHTML = `
+            <input type="text" placeholder="اسم القطعة" class="sp-name" style="flex:2;padding:8px;border-radius:6px;border:1px solid var(--border-color);background:var(--bg-secondary);color:var(--text-primary);font-family:Cairo;">
+            <input type="number" placeholder="الكمية" class="sp-qty" value="1" min="1" style="width:70px;padding:8px;border-radius:6px;border:1px solid var(--border-color);background:var(--bg-secondary);color:var(--text-primary);font-family:Cairo;">
+            <input type="number" placeholder="السعر" class="sp-price" style="width:100px;padding:8px;border-radius:6px;border:1px solid var(--border-color);background:var(--bg-secondary);color:var(--text-primary);font-family:Cairo;">
+            <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--accent-red);cursor:pointer;">
+                <input type="checkbox" class="sp-unavailable"> غير متوفرة
+            </label>
+            <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--accent-red);cursor:pointer;font-size:16px;"><i class="fas fa-trash"></i></button>
+        `;
+        container.appendChild(div);
+      };
+
+      window.searchCustomers = async function () {
+        const q = document
+          .getElementById("customerSearch")
+          .value.trim()
+          .toLowerCase();
+        const ac = document.getElementById("customerAutocomplete");
+        if (q.length < 1) {
+          ac.classList.remove("show");
+          return;
+        }
+        const customers = await db.filter(
+          "users",
+          (u) =>
+            u.user_type === "customer" &&
+            (u.name.toLowerCase().includes(q) || u.phone.includes(q)),
+        );
+        if (customers.length === 0) {
+          ac.innerHTML =
+            '<div class="autocomplete-item" style="color:var(--text-muted)">لا نتائج</div>';
+          ac.classList.add("show");
+          return;
+        }
+        ac.innerHTML = customers
+          .map(
+            (c) => `
+            <div class="autocomplete-item" onclick="selectCustomer(${c.id}, '${c.name}', '${c.phone}')">
+                <strong>${c.name}</strong> - ${c.phone}
+            </div>
+        `,
+          )
+          .join("");
+        ac.classList.add("show");
+      };
+
+      window.selectCustomer = function (id, name, phone) {
+        document.getElementById("selectedCustomerId").value = id;
+        document.getElementById("customerSearch").value = name;
+        document.getElementById("selectedCustomerName").textContent = name;
+        document.getElementById("selectedCustomerPhone").textContent = phone;
+        document
+          .getElementById("selectedCustomerInfo")
+          .classList.remove("hidden");
+        document
+          .getElementById("customerAutocomplete")
+          .classList.remove("show");
+      };
+
+      window.showAddCustomerInline = function () {
+        document.getElementById("newCustomerForm").classList.toggle("hidden");
+      };
+
+      window.addInlineCustomer = async function () {
+        const name = document.getElementById("newCustName").value.trim();
+        const phone = document.getElementById("newCustPhone").value.trim();
+        const username = document
+          .getElementById("newCustUsername")
+          .value.trim();
+        const password = document
+          .getElementById("newCustPassword")
+          .value.trim();
+        if (!name || !phone || !username || !password) {
+          showToast("يرجى ملء جميع حقول الزبون", "warning");
+          return;
+        }
+        const exists = await db.findOne(
+          "users",
+          (u) => u.username === username,
+        );
+        if (exists) {
+          showToast("اسم المستخدم موجود مسبقاً", "error");
+          return;
+        }
+        const customer = await db.add("users", {
+          username,
+          password,
+          name,
+          phone,
+          user_type: "customer",
+          created_at: new Date().toISOString(),
+        });
+        selectCustomer(customer.id, customer.name, customer.phone);
+        document.getElementById("newCustomerForm").classList.add("hidden");
+        showToast("تم إضافة الزبون بنجاح", "success");
+      };
+
+      window.previewImage = function (event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = document.getElementById("imagePreview");
+            img.src = e.target.result;
+            img.classList.remove("hidden");
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+
+      window.savePump = async function () {
+        const customerId = parseFloat(
+          document.getElementById("selectedCustomerId").value,
+        );
+        const name = document.getElementById("pumpName").value.trim();
+        const type = document.getElementById("pumpType").value;
+        const power = document.getElementById("pumpPower").value.trim();
+        const fault = document.getElementById("pumpFault").value.trim();
+        const deliveryDate = document.getElementById("pumpDeliveryDate").value;
+        const imageEl = document.getElementById("imagePreview");
+
+        if (!customerId || !name || !type) {
+          showToast("يرجى اختيار الزبون وملء اسم ونوع المحرك", "warning");
+          return;
+        }
+
+        const pump = await db.add("pumps", {
+          name,
+          type,
+          power,
+          status: "unrepaired",
+          customer_id: customerId,
+          technician_id: currentUser.id,
+          fault_description: fault,
+          images: imageEl.src ? [imageEl.src] : [],
+          repair_cost: 0,
+          final_cost: 0,
+          payment_status: "",
+          entry_date: new Date().toISOString(),
+          expected_delivery: deliveryDate
+            ? new Date(deliveryDate).toISOString()
+            : "",
+          delivered_date: "",
+          created_at: new Date().toISOString(),
+        });
+
+        // Save spare parts
+        const spItems = document.querySelectorAll(
+          "#sparePartsList .spare-part-item",
+        );
+        for (const item of spItems) {
+          const spName = item.querySelector(".sp-name").value.trim();
+          if (!spName) continue;
+          await db.add("spare_parts", {
+            pump_id: pump.id,
+            name: spName,
+            quantity: parseInt(item.querySelector(".sp-qty").value) || 1,
+            price: parseFloat(item.querySelector(".sp-price").value) || 0,
+            available: !item.querySelector(".sp-unavailable").checked,
+          });
+        }
+
+        // Notify customer
+        await db.add("notifications", {
+          user_id: customerId,
+          title: "محرك جديد في الورشة",
+          message: `تم تسجيل ${name} في الورشة للتصليح`,
+          type: "info",
+          priority: "normal",
+          icon: "fa-cog",
+          read: false,
+          created_at: new Date().toISOString(),
+        });
+
+        showToast("تم إضافة المحرك بنجاح", "success");
+        sparePartsFields = [];
+        navigate("pump-list");
+      };
+
+      // ==========================================
+      // PUMP LIST
+      // ==========================================
+      let pumpFilter = "all";
+      async function renderPumpList(el) {
+        const pumps = await db.getAll("pumps");
+        let filtered = pumps;
+        if (pumpFilter === "unrepaired")
+          filtered = pumps.filter((p) => p.status === "unrepaired");
+        else if (pumpFilter === "in_progress")
+          filtered = pumps.filter((p) => p.status === "in_progress");
+        else if (pumpFilter === "ready")
+          filtered = pumps.filter((p) => p.status === "ready");
+        else if (pumpFilter === "delivered")
+          filtered = pumps.filter((p) => p.status === "delivered");
+
+        filtered.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at),
+        );
+
+        el.innerHTML = `
+        <div class="filter-tabs">
+            <button class="filter-tab ${pumpFilter === "all" ? "active" : ""}" onclick="setPumpFilter('all')">الكل (${pumps.length})</button>
+            <button class="filter-tab ${pumpFilter === "unrepaired" ? "active" : ""}" onclick="setPumpFilter('unrepaired')">غير مصلح (${pumps.filter((p) => p.status === "unrepaired").length})</button>
+            <button class="filter-tab ${pumpFilter === "in_progress" ? "active" : ""}" onclick="setPumpFilter('in_progress')">قيد التصليح (${pumps.filter((p) => p.status === "in_progress").length})</button>
+            <button class="filter-tab ${pumpFilter === "ready" ? "active" : ""}" onclick="setPumpFilter('ready')">جاهز (${pumps.filter((p) => p.status === "ready").length})</button>
+            <button class="filter-tab ${pumpFilter === "delivered" ? "active" : ""}" onclick="setPumpFilter('delivered')">تم التسليم (${pumps.filter((p) => p.status === "delivered").length})</button>
+        </div>
+        <div class="card">
+            <div class="table-container">
+                <table>
+                    <thead><tr>
+                        <th>المحرك</th><th>النوع</th><th>الزبون</th><th>الحالة</th><th>تاريخ الدخول</th><th>الإجراءات</th>
+                    </tr></thead>
+                    <tbody id="pumpsTableBody"></tbody>
+                </table>
+            </div>
+            ${filtered.length === 0 ? '<div class="empty-state" style="padding:30px;"><i class="fas fa-inbox"></i><p>لا توجد محركات</p></div>' : ""}
+        </div>`;
+
+        const tbody = document.getElementById("pumpsTableBody");
+        for (const p of filtered) {
+          const cust = await db.get("users", p.customer_id);
+          tbody.innerHTML += `
+            <tr>
+                <td><strong>${p.name}</strong><br><small style="color:var(--text-muted)">${p.power || ""}</small></td>
+                <td>${p.type}</td>
+                <td>${cust ? cust.name : "-"}</td>
+                <td><span class="status-badge ${statusClass(p.status)}">${statusText(p.status)}</span></td>
+                <td>${formatDate(p.entry_date)}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm" onclick="showPumpDetail(${p.id})" title="تفاصيل"><i class="fas fa-eye"></i></button>
+                    ${
+                      p.status !== "delivered"
+                        ? `
+                    <button class="btn btn-warning btn-sm" onclick="changePumpStatus(${p.id})" title="تغيير الحالة"><i class="fas fa-exchange-alt"></i></button>
+                    `
+                        : ""
+                    }
+                    ${
+                      p.status === "ready"
+                        ? `
+                    <button class="btn btn-success btn-sm" onclick="showDeliverModal(${p.id})" title="تسليم"><i class="fas fa-handshake"></i></button>
+                    `
+                        : ""
+                    }
+                    <button class="btn btn-danger btn-sm" onclick="deletePump(${p.id})" title="حذف"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>`;
+        }
+      }
+
+      window.setPumpFilter = function (f) {
+        pumpFilter = f;
+        loadTechAdminPage();
+      };
+
+      window.changePumpStatus = async function (id) {
+        const pump = await db.get("pumps", id);
+        const statusFlow = { unrepaired: "in_progress", in_progress: "ready" };
+        const next = statusFlow[pump.status];
+        if (!next) {
+          showToast("لا يمكن تغيير الحالة", "warning");
+          return;
+        }
+        pump.status = next;
+        await db.put("pumps", pump);
+
+        // Notify customer
+        const msg =
+          next === "in_progress"
+            ? `بدأ تصليح ${pump.name}`
+            : `${pump.name} جاهز للاستلام`;
+        await db.add("notifications", {
+          user_id: pump.customer_id,
+          title: next === "ready" ? "محرك جاهز!" : "بدء التصليح",
+          message: msg,
+          type: next === "ready" ? "success" : "info",
+          priority: next === "ready" ? "high" : "normal",
+          icon: next === "ready" ? "fa-check-circle" : "fa-wrench",
+          read: false,
+          created_at: new Date().toISOString(),
+        });
+
+        showToast(`تم تغيير الحالة إلى: ${statusText(next)}`, "success");
+        loadTechAdminPage();
+      };
+
+      window.showDeliverModal = async function (pumpId) {
+        const pump = await db.get("pumps", pumpId);
+        const modal = document.getElementById("modalContent");
+        modal.innerHTML = `
+        <div class="modal-header">
+            <h3><i class="fas fa-handshake" style="color:var(--accent-green);margin-left:8px;"></i> تسليم المحرك</h3>
+            <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <p style="margin-bottom:15px;color:var(--text-secondary);">محرك: <strong>${pump.name}</strong></p>
+        <div class="form-group">
+            <label>السعر النهائي (${CURRENCY})</label>
+            <input type="number" id="deliverCost" value="${pump.repair_cost || pump.final_cost || 0}" placeholder="أدخل السعر النهائي">
+        </div>
+        <div class="form-group">
+            <label>طريقة الدفع</label>
+            <select id="deliverPayment">
+                <option value="paid">كاش (مدفوع)</option>
+                <option value="debt">دين</option>
+            </select>
+        </div>
+        <div id="debtAmountSection" class="hidden form-group">
+            <label>المبلغ المدفوع الآن (${CURRENCY})</label>
+            <input type="number" id="paidNow" value="0" placeholder="0">
+        </div>
+        <button class="btn btn-success btn-full" onclick="deliverPump(${pumpId})">
+            <i class="fas fa-check"></i> تأكيد التسليم
+        </button>`;
+        document
+          .getElementById("deliverPayment")
+          .addEventListener("change", function () {
+            document
+              .getElementById("debtAmountSection")
+              .classList.toggle("hidden", this.value !== "debt");
+          });
+        document.getElementById("modalOverlay").classList.add("show");
+      };
+
+      window.deliverPump = async function (pumpId) {
+        const pump = await db.get("pumps", pumpId);
+        const cost =
+          parseFloat(document.getElementById("deliverCost").value) || 0;
+        const paymentType = document.getElementById("deliverPayment").value;
+        pump.status = "delivered";
+        pump.final_cost = cost;
+        pump.payment_status = paymentType;
+        pump.delivered_date = new Date().toISOString();
+        await db.put("pumps", pump);
+
+        if (paymentType === "debt") {
+          const paidNow =
+            parseFloat(document.getElementById("paidNow").value) || 0;
+          await db.add("debts", {
+            customer_id: pump.customer_id,
+            pump_id: pump.id,
+            total_amount: cost,
+            paid_amount: paidNow,
+            remaining_amount: cost - paidNow,
+            reminder_frequency: "none",
+            reminder_day: 1,
+            reminder_enabled: false,
+            last_reminder_date: "",
+            next_reminder_date: "",
+            created_at: new Date().toISOString(),
+          });
+          if (paidNow > 0) {
+            await db.add("debt_payments", {
+              debt_id: null,
+              amount: paidNow,
+              date: new Date().toISOString(),
+              note: "دفعة عند التسليم",
+            });
+          }
+        }
+
+        await db.add("notifications", {
+          user_id: pump.customer_id,
+          title: "تم تسليم المحرك",
+          message: `تم تسليم ${pump.name} بمبلغ ${formatMoney(cost)} (${paymentType === "paid" ? "مدفوع" : "دين"})`,
+          type: paymentType === "paid" ? "success" : "warning",
+          priority: "normal",
+          icon: "fa-handshake",
+          read: false,
+          created_at: new Date().toISOString(),
+        });
+
+        closeModal();
+        showToast("تم تسليم المحرك بنجاح", "success");
+        loadTechAdminPage();
+      };
+
+      window.deletePump = async function (id) {
+        if (!confirm("هل أنت متأكد من حذف هذا المحرك؟")) return;
+        await db.delete("pumps", id);
+        // Delete related spare parts
+        const parts = await db.filter("spare_parts", (sp) => sp.pump_id === id);
+        for (const p of parts) await db.delete("spare_parts", p.id);
+        showToast("تم حذف المحرك", "success");
+        loadTechAdminPage();
+      };
+
+      // ==========================================
+      // PUMP DETAIL (SHARED)
+      // ==========================================
+      window.showPumpDetail = async function (id) {
+        const pump = await db.get("pumps", id);
+        if (!pump) {
+          showToast("المحرك غير موجود", "error");
+          return;
+        }
+        const cust = await db.get("users", pump.customer_id);
+        const tech = pump.technician_id
+          ? await db.get("users", pump.technician_id)
+          : null;
+        const parts = await db.filter("spare_parts", (sp) => sp.pump_id === id);
+
+        // Check if modal exists (tech/admin view) or use page content (customer)
+        const modalEl = document.getElementById("modalContent");
+        if (modalEl) {
+          modalEl.innerHTML = renderPumpDetailHTML(pump, cust, tech, parts);
+          document.getElementById("modalOverlay").classList.add("show");
+        } else {
+          // For customer, create an overlay
+          const overlay = document.createElement("div");
+          overlay.className = "modal-overlay show";
+          overlay.id = "tempModalOverlay";
+          overlay.onclick = function (e) {
+            if (e.target === overlay) overlay.remove();
+          };
+          overlay.innerHTML = `<div class="modal">${renderPumpDetailHTML(pump, cust, tech, parts)}</div>`;
+          document.body.appendChild(overlay);
+        }
+      };
+
+      function renderPumpDetailHTML(pump, cust, tech, parts) {
+        return `
+        <div class="modal-header">
+            <h3><i class="fas fa-cog" style="color:var(--accent-blue);margin-left:8px;"></i> تفاصيل المحرك</h3>
+            <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div style="display:grid;gap:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <h4 style="font-size:18px;">${pump.name}</h4>
+                <span class="status-badge ${statusClass(pump.status)}">${statusText(pump.status)}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:14px;">
+                <div><span style="color:var(--text-muted);">النوع:</span> ${pump.type}</div>
+                <div><span style="color:var(--text-muted);">القوة:</span> ${pump.power || "-"}</div>
+                <div><span style="color:var(--text-muted);">الزبون:</span> ${cust ? cust.name : "-"}</div>
+                <div><span style="color:var(--text-muted);">الفني:</span> ${tech ? tech.name : "-"}</div>
+                <div><span style="color:var(--text-muted);">تاريخ الدخول:</span> ${formatDate(pump.entry_date)}</div>
+                <div><span style="color:var(--text-muted);">التسليم المتوقع:</span> ${formatDate(pump.expected_delivery)}</div>
+                ${pump.final_cost ? `<div><span style="color:var(--text-muted);">التكلفة:</span> ${formatMoney(pump.final_cost)}</div>` : ""}
+                ${pump.payment_status ? `<div><span style="color:var(--text-muted);">الدفع:</span> ${pump.payment_status === "paid" ? "مدفوع" : "دين"}</div>` : ""}
+            </div>
+            ${
+              pump.fault_description
+                ? `
+            <div style="background:var(--bg-primary);padding:12px;border-radius:8px;">
+                <h5 style="color:var(--accent-yellow);margin-bottom:5px;"><i class="fas fa-exclamation-circle" style="margin-left:5px;"></i> وصف العطل</h5>
+                <p style="font-size:13px;line-height:1.8;">${pump.fault_description}</p>
+            </div>`
+                : ""
+            }
+            ${
+              pump.images && pump.images.length > 0
+                ? `
+            <div>
+                <h5 style="margin-bottom:8px;">صور المحرك</h5>
+                ${pump.images.map((img) => `<img src="${img}" class="img-preview" style="display:inline-block;margin-left:8px;">`).join("")}
+            </div>`
+                : ""
+            }
+            ${
+              parts.length > 0
+                ? `
+            <div>
+                <h5 style="margin-bottom:8px;"><i class="fas fa-tools" style="color:var(--accent-purple);margin-left:5px;"></i> قطع الغيار</h5>
+                ${parts
+                  .map(
+                    (p) => `
+                    <div class="spare-part-item">
+                        <span class="part-name">${p.name}</span>
+                        <span class="part-qty">×${p.quantity}</span>
+                        <span class="part-price">${formatMoney(p.price)}</span>
+                        <span class="part-status ${p.available ? "available" : "unavailable"}">${p.available ? "متوفرة" : "غير متوفرة"}</span>
+                    </div>
+                `,
+                  )
+                  .join("")}
+            </div>`
+                : ""
+            }
+        </div>`;
+      }
+
+      // ==========================================
+      // MISSING SPARE PARTS
+      // ==========================================
+      async function renderMissingParts(el) {
+        const missingParts = await db.filter(
+          "spare_parts",
+          (sp) => !sp.available,
+        );
+        el.innerHTML = `
+        <div class="card" style="margin-bottom:20px;">
+            <div class="card-header">
+                <h3><i class="fas fa-exclamation-triangle" style="color:var(--accent-red);margin-left:8px;"></i> قطع الغيار غير المتوفرة (${missingParts.length})</h3>
+            </div>
+            ${missingParts.length === 0 ? '<div class="empty-state"><i class="fas fa-check-circle" style="color:var(--accent-green);"></i><p>جميع القطع متوفرة!</p></div>' : ""}
+            <div class="missing-parts-grid" id="missingPartsGrid"></div>
+        </div>`;
+
+        if (missingParts.length > 0) {
+          const grid = document.getElementById("missingPartsGrid");
+          for (const part of missingParts) {
+            const pump = await db.get("pumps", part.pump_id);
+            const cust = pump ? await db.get("users", pump.customer_id) : null;
+            grid.innerHTML += `
+                <div class="missing-part-card">
+                    <div style="display:flex;justify-content:space-between;align-items:start;">
+                        <div>
+                            <h4><i class="fas fa-tools" style="margin-left:5px;"></i> ${part.name}</h4>
+                            <p class="part-pump"><i class="fas fa-cog" style="margin-left:4px;"></i> ${pump ? pump.name : "محرك غير معروف"}</p>
+                            <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">
+                                الزبون: ${cust ? cust.name : "-"} | الكمية: ${part.quantity} | السعر: ${formatMoney(part.price)}
+                            </p>
+                        </div>
+                        <button class="btn btn-success btn-sm" onclick="markPartAvailable(${part.id})" title="تحديد كمتوفرة">
+                            <i class="fas fa-check"></i>
+                        </button>
+                    </div>
+                </div>`;
+          }
+        }
+      }
+
+      window.markPartAvailable = async function (id) {
+        const part = await db.get("spare_parts", id);
+        part.available = true;
+        await db.put("spare_parts", part);
+        showToast("تم تحديد القطعة كمتوفرة", "success");
+        loadTechAdminPage();
+      };
+
+      // ==========================================
+      // DEBTS MANAGEMENT
+      // ==========================================
+      async function renderDebtsMgmt(el) {
+        await processReminders();
+        const debts = await db.getAll("debts");
+        const activeDebts = debts.filter((d) => d.remaining_amount > 0);
+        const paidDebts = debts.filter((d) => d.remaining_amount <= 0);
+        const totalRemaining = activeDebts.reduce(
+          (s, d) => s + d.remaining_amount,
+          0,
+        );
+
+        el.innerHTML = `
+        <div class="stats-grid">
+            <div class="stat-card orange">
+                <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+                <div class="stat-value">${formatMoney(totalRemaining)}</div>
+                <div class="stat-label">إجمالي الديون المتبقية</div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                <div class="stat-value">${activeDebts.length}</div>
+                <div class="stat-label">ديون نشطة</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-icon"><i class="fas fa-check-double"></i></div>
+                <div class="stat-value">${paidDebts.length}</div>
+                <div class="stat-label">ديون مسددة</div>
+            </div>
+        </div>
+
+        <div style="margin-bottom:15px;">
+            <button class="btn btn-warning btn-sm" onclick="runAllReminders()">
+                <i class="fas fa-bell"></i> تشغيل التذكيرات المستحقة
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><h3>الديون النشطة</h3></div>
+            <div id="debtsListContainer"></div>
+        </div>`;
+
+        const container = document.getElementById("debtsListContainer");
+        if (activeDebts.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state"><i class="fas fa-check-circle" style="color:var(--accent-green);"></i><p>لا توجد ديون مستحقة</p></div>';
+          return;
+        }
+
+        for (const d of activeDebts) {
+          const cust = await db.get("users", d.customer_id);
+          const pump = d.pump_id ? await db.get("pumps", d.pump_id) : null;
+          const pct = Math.round((d.paid_amount / d.total_amount) * 100);
+          container.innerHTML += `
+            <div class="pump-item" style="flex-direction:column;align-items:stretch;margin-bottom:12px;padding:15px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <h4 style="font-size:15px;font-weight:700;">${cust ? cust.name : "غير معروف"}</h4>
+                        <p style="font-size:12px;color:var(--text-muted);">${pump ? pump.name : "محرك محذوف"} | الإجمالي: ${formatMoney(d.total_amount)}</p>
+                        <p style="font-size:12px;color:var(--text-muted);">المدفوع: ${formatMoney(d.paid_amount)} | المتبقي: <strong style="color:var(--accent-red);">${formatMoney(d.remaining_amount)}</strong></p>
+                    </div>
+                    <div style="display:flex;gap:5px;flex-wrap:wrap;">
+                        <button class="btn btn-success btn-sm" onclick="showPayDebtModal(${d.id})"><i class="fas fa-money-bill"></i> تسديد</button>
+                        <button class="btn btn-secondary btn-sm" onclick="showDebtReminderSettings(${d.id})"><i class="fas fa-bell"></i></button>
+                        <button class="btn btn-warning btn-sm" onclick="sendInstantReminder(${d.id})"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill green" style="width:${pct}%"></div></div>
+                <div style="display:flex;justify-content:space-between;margin-top:6px;">
+                    <span style="font-size:11px;color:var(--text-muted);">تم السداد ${pct}%</span>
+                    <span class="chip ${d.reminder_enabled ? "active" : "inactive"}">${d.reminder_enabled ? (d.reminder_frequency === "weekly" ? "أسبوعي" : "شهري") : "بدون تذكير"}</span>
+                </div>
+            </div>`;
+        }
+      }
+
+      window.showPayDebtModal = async function (debtId) {
+        const debt = await db.get("debts", debtId);
+        const modal = document.getElementById("modalContent");
+        modal.innerHTML = `
+        <div class="modal-header">
+            <h3><i class="fas fa-money-bill" style="color:var(--accent-green);margin-left:8px;"></i> تسديد دفعة</h3>
+            <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <p style="margin-bottom:10px;">المتبقي: <strong style="color:var(--accent-red);">${formatMoney(debt.remaining_amount)}</strong></p>
+        <div class="form-group">
+            <label>المبلغ المدفوع (${CURRENCY})</label>
+            <input type="number" id="payAmount" max="${debt.remaining_amount}" placeholder="أدخل المبلغ">
+        </div>
+        <div class="form-group">
+            <label>ملاحظة (اختياري)</label>
+            <input type="text" id="payNote" placeholder="ملاحظة...">
+        </div>
+        <button class="btn btn-success btn-full" onclick="payDebt(${debtId})"><i class="fas fa-check"></i> تأكيد الدفع</button>`;
+        document.getElementById("modalOverlay").classList.add("show");
+      };
+
+      window.payDebt = async function (debtId) {
+        const debt = await db.get("debts", debtId);
+        const amount =
+          parseFloat(document.getElementById("payAmount").value) || 0;
+        const note = document.getElementById("payNote").value.trim();
+        if (amount <= 0 || amount > debt.remaining_amount) {
+          showToast("مبلغ غير صحيح", "error");
+          return;
+        }
+        debt.paid_amount += amount;
+        debt.remaining_amount -= amount;
+        await db.put("debts", debt);
+        await db.add("debt_payments", {
+          debt_id: debtId,
+          amount,
+          date: new Date().toISOString(),
+          note: note || "دفعة",
+        });
+
+        await db.add("notifications", {
+          user_id: debt.customer_id,
+          title: "تم تسديد دفعة",
+          message: `تم تسديد ${formatMoney(amount)}. المتبقي: ${formatMoney(debt.remaining_amount)}`,
+          type: "success",
+          priority: "normal",
+          icon: "fa-money-bill-wave",
+          read: false,
+          created_at: new Date().toISOString(),
+        });
+
+        closeModal();
+        showToast("تم تسديد الدفعة بنجاح", "success");
+        loadTechAdminPage();
+      };
+
+      window.showDebtReminderSettings = async function (debtId) {
+        const debt = await db.get("debts", debtId);
+        const modal = document.getElementById("modalContent");
+        modal.innerHTML = `
+        <div class="modal-header">
+            <h3><i class="fas fa-bell" style="color:var(--accent-yellow);margin-left:8px;"></i> إعدادات التذكير</h3>
+            <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="form-group">
+            <label>التكرار</label>
+            <select id="reminderFreq" onchange="toggleReminderDay()">
+                <option value="none" ${debt.reminder_frequency === "none" ? "selected" : ""}>بدون تذكير</option>
+                <option value="weekly" ${debt.reminder_frequency === "weekly" ? "selected" : ""}>أسبوعي</option>
+                <option value="monthly" ${debt.reminder_frequency === "monthly" ? "selected" : ""}>شهري</option>
+            </select>
+        </div>
+        <div class="form-group" id="weeklyDayGroup" class="${debt.reminder_frequency !== "weekly" ? "hidden" : ""}">
+            <label>يوم الأسبوع</label>
+            <select id="reminderWeekDay">
+                ${[0, 1, 2, 3, 4, 5, 6].map((d) => `<option value="${d}" ${debt.reminder_day === d ? "selected" : ""}>${dayName(d)}</option>`).join("")}
+            </select>
+        </div>
+        <div class="form-group" id="monthlyDayGroup" class="${debt.reminder_frequency !== "monthly" ? "hidden" : ""}">
+            <label>يوم الشهر (1-28)</label>
+            <input type="number" id="reminderMonthDay" min="1" max="28" value="${debt.reminder_day || 1}">
+        </div>
+        <div class="form-group">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                <input type="checkbox" id="reminderEnabled" ${debt.reminder_enabled ? "checked" : ""}>
+                تفعيل التذكير
+            </label>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="saveReminderSettings(${debtId})"><i class="fas fa-save"></i> حفظ</button>`;
+
+        // Fix visibility
+        setTimeout(() => {
+          toggleReminderDay();
+        }, 50);
+        document.getElementById("modalOverlay").classList.add("show");
+      };
+
+      window.toggleReminderDay = function () {
+        const freq = document.getElementById("reminderFreq").value;
+        const wg = document.getElementById("weeklyDayGroup");
+        const mg = document.getElementById("monthlyDayGroup");
+        if (wg) wg.style.display = freq === "weekly" ? "block" : "none";
+        if (mg) mg.style.display = freq === "monthly" ? "block" : "none";
+      };
+
+      window.saveReminderSettings = async function (debtId) {
+        const debt = await db.get("debts", debtId);
+        const freq = document.getElementById("reminderFreq").value;
+        const enabled = document.getElementById("reminderEnabled").checked;
+        debt.reminder_frequency = freq;
+        debt.reminder_enabled = enabled && freq !== "none";
+        if (freq === "weekly") {
+          debt.reminder_day = parseInt(
+            document.getElementById("reminderWeekDay").value,
+          );
+        } else if (freq === "monthly") {
+          debt.reminder_day =
+            parseInt(document.getElementById("reminderMonthDay").value) || 1;
+        }
+        debt.next_reminder_date = debt.reminder_enabled
+          ? getNextReminderDate(debt.reminder_frequency, debt.reminder_day)
+          : "";
+        await db.put("debts", debt);
+        closeModal();
+        showToast("تم حفظ إعدادات التذكير", "success");
+        loadTechAdminPage();
+      };
+
+      window.sendInstantReminder = async function (debtId) {
+        const debt = await db.get("debts", debtId);
+        const cust = await db.get("users", debt.customer_id);
+        await db.add("notifications", {
+          user_id: debt.customer_id,
+          title: "تذكير بدين مستحق",
+          message: `عزيزي ${cust.name}، لديك دين مستحق بقيمة ${formatMoney(debt.remaining_amount)}. يرجى التسديد في أقرب وقت.`,
+          type: "warning",
+          priority: "urgent",
+          icon: "fa-money-bill-wave",
+          read: false,
+          created_at: new Date().toISOString(),
+        });
+        await db.add("debt_reminders_log", {
+          debt_id: debtId,
+          type: "manual",
+          date: new Date().toISOString(),
+          remaining_amount: debt.remaining_amount,
+        });
+        showToast("تم إرسال التذكير", "success");
+      };
+
+      window.runAllReminders = async function () {
+        await processReminders();
+        showToast("تم معالجة جميع التذكيرات المستحقة", "success");
+      };
+
+      // ==========================================
+      // MESSAGES (SHARED)
+      // ==========================================
+      let activeChatUser = null;
+      async function renderMessages(el) {
+        const isCustomer = currentUser.user_type === "customer";
+        // Get conversations
+        const allMessages = await db.getAll("messages");
+        const myMessages = allMessages.filter(
+          (m) =>
+            m.sender_id === currentUser.id || m.receiver_id === currentUser.id,
+        );
+
+        // Build conversation list
+        const convMap = {};
+        myMessages.forEach((m) => {
+          const otherId =
+            m.sender_id === currentUser.id ? m.receiver_id : m.sender_id;
+          if (
+            !convMap[otherId] ||
+            new Date(m.created_at) > new Date(convMap[otherId].created_at)
+          ) {
+            convMap[otherId] = m;
+          }
+        });
+
+        // If customer, also show technicians they can talk to
+        if (isCustomer) {
+          const techs = await db.filter(
+            "users",
+            (u) => u.user_type === "technician" || u.user_type === "admin",
+          );
+          techs.forEach((t) => {
+            if (!convMap[t.id]) convMap[t.id] = null;
+          });
+        } else {
+          const customers = await db.filter(
+            "users",
+            (u) => u.user_type === "customer",
+          );
+          customers.forEach((c) => {
+            if (!convMap[c.id]) convMap[c.id] = null;
+          });
+        }
+
+        el.innerHTML = `
+        <div class="chat-container">
+            <div class="chat-list" id="chatList"></div>
+            <div class="chat-window" id="chatWindow">
+                <div class="empty-state" style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+                    <i class="fas fa-comments" style="font-size:48px;color:var(--text-muted);margin-bottom:15px;"></i>
+                    <p>اختر محادثة للبدء</p>
+                </div>
+            </div>
+        </div>`;
+
+        const chatList = document.getElementById("chatList");
+        for (const [uid, lastMsg] of Object.entries(convMap)) {
+          const user = await db.get("users", parseFloat(uid));
+          if (!user) continue;
+          const unread = myMessages.filter(
+            (m) =>
+              m.sender_id === parseFloat(uid) &&
+              m.receiver_id === currentUser.id &&
+              !m.read,
+          ).length;
+          chatList.innerHTML += `
+            <div class="chat-item ${activeChatUser === parseFloat(uid) ? "active" : ""}" onclick="openChat(${uid})">
+                <div class="chat-avatar">${user.name.charAt(0)}</div>
+                <div class="chat-preview">
+                    <h4>${user.name}</h4>
+                    <p>${lastMsg ? lastMsg.content : "ابدأ محادثة..."}</p>
+                </div>
+                ${unread > 0 ? '<div class="unread-dot"></div>' : ""}
+            </div>`;
+        }
+      }
+
+      window.openChat = async function (userId) {
+        activeChatUser = parseFloat(userId);
+        const user = await db.get("users", activeChatUser);
+        if (!user) return;
+
+        // Mark messages as read
+        const unreadMsgs = await db.filter(
+          "messages",
+          (m) =>
+            m.sender_id === activeChatUser &&
+            m.receiver_id === currentUser.id &&
+            !m.read,
+        );
+        for (const m of unreadMsgs) {
+          m.read = true;
+          await db.put("messages", m);
+        }
+
+        const chatWindow = document.getElementById("chatWindow");
+        chatWindow.innerHTML = `
+        <div class="chat-header-bar">
+            <div class="chat-avatar" style="width:36px;height:36px;font-size:14px;">${user.name.charAt(0)}</div>
+            <div><h4 style="font-size:14px;">${user.name}</h4><p style="font-size:11px;color:var(--text-muted);">${user.user_type === "customer" ? "زبون" : user.user_type === "admin" ? "مدير" : "فني"}</p></div>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-bar">
+            <input type="text" id="chatInput" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMessage()">
+            <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>`;
+
+        await loadChatMessages();
+
+        // Update chat list active state
+        document
+          .querySelectorAll(".chat-item")
+          .forEach((item) => item.classList.remove("active"));
+        event.target.closest(".chat-item")?.classList.add("active");
+      };
+
+      async function loadChatMessages() {
+        if (!activeChatUser) return;
+        const allMsgs = await db.getAll("messages");
+        const msgs = allMsgs
+          .filter(
+            (m) =>
+              (m.sender_id === currentUser.id &&
+                m.receiver_id === activeChatUser) ||
+              (m.sender_id === activeChatUser &&
+                m.receiver_id === currentUser.id),
+          )
+          .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+        const container = document.getElementById("chatMessages");
+        if (!container) return;
+        container.innerHTML = msgs
+          .map(
+            (m) => `
+            <div class="message-bubble ${m.sender_id === currentUser.id ? "sent" : "received"}">
+                ${m.content}
+                <div class="message-time">${formatDateTime(m.created_at)}</div>
+            </div>
+        `,
+          )
+          .join("");
+        container.scrollTop = container.scrollHeight;
+      }
+
+      window.sendMessage = async function () {
+        const input = document.getElementById("chatInput");
+        const content = input.value.trim();
+        if (!content || !activeChatUser) return;
+        await db.add("messages", {
+          sender_id: currentUser.id,
+          receiver_id: activeChatUser,
+          content,
+          pump_id: null,
+          read: false,
+          created_at: new Date().toISOString(),
+        });
+        // Add notification for receiver
+        await db.add("notifications", {
+          user_id: activeChatUser,
+          title: "رسالة جديدة",
+          message: `رسالة من ${currentUser.name}: ${content.substring(0, 50)}...`,
+          type: "info",
+          priority: "normal",
+          icon: "fa-envelope",
+          read: false,
+          created_at: new Date().toISOString(),
+        });
+        input.value = "";
+        await loadChatMessages();
+      };
+
+      // ==========================================
+      // NOTIFICATIONS PAGE (SHARED)
+      // ==========================================
+      let notifFilter = "all";
+      async function renderNotificationsPage(el) {
+        let notifs = await db.filter(
+          "notifications",
+          (n) => n.user_id === currentUser.id,
+        );
+        notifs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        if (notifFilter === "unread") notifs = notifs.filter((n) => !n.read);
+        else if (notifFilter !== "all")
+          notifs = notifs.filter((n) => n.type === notifFilter);
+
+        const allNotifs = await db.filter(
+          "notifications",
+          (n) => n.user_id === currentUser.id,
+        );
+        const unreadCount = allNotifs.filter((n) => !n.read).length;
+
+        el.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;flex-wrap:wrap;gap:10px;">
+            <div class="filter-tabs" style="margin-bottom:0;">
+                <button class="filter-tab ${notifFilter === "all" ? "active" : ""}" onclick="setNotifFilter('all')">الكل</button>
+                <button class="filter-tab ${notifFilter === "unread" ? "active" : ""}" onclick="setNotifFilter('unread')">غير مقروءة (${unreadCount})</button>
+                <button class="filter-tab ${notifFilter === "success" ? "active" : ""}" onclick="setNotifFilter('success')">نجاح</button>
+                <button class="filter-tab ${notifFilter === "warning" ? "active" : ""}" onclick="setNotifFilter('warning')">تحذير</button>
+                <button class="filter-tab ${notifFilter === "info" ? "active" : ""}" onclick="setNotifFilter('info')">معلومة</button>
+            </div>
+            <div style="display:flex;gap:8px;">
+                <button class="btn btn-primary btn-sm" onclick="markAllNotifsRead()"><i class="fas fa-check-double"></i> قراءة الكل</button>
+                <button class="btn btn-danger btn-sm" onclick="clearReadNotifs()"><i class="fas fa-trash"></i> حذف المقروءة</button>
+            </div>
+        </div>
+        <div class="card">
+            ${
+              notifs.length === 0
+                ? '<div class="empty-state"><i class="fas fa-bell-slash"></i><p>لا توجد إشعارات</p></div>'
+                : notifs
+                    .map((n) => {
+                      const typeColors = {
+                        success: "var(--accent-green)",
+                        warning: "var(--accent-yellow)",
+                        error: "var(--accent-red)",
+                        info: "var(--accent-blue)",
+                      };
+                      const color = typeColors[n.type] || typeColors.info;
+                      return `
+                <div class="notif-page-item ${n.read ? "" : "unread"}">
+                    <div class="priority-bar ${n.priority || "normal"}"></div>
+                    <div class="notif-icon-large" style="background:${color}20;color:${color};">
+                        <i class="fas ${n.icon || "fa-bell"}"></i>
+                    </div>
+                    <div class="notif-body">
+                        <h4>${n.title} ${n.priority === "urgent" ? '<span class="priority-tag urgent">عاجل</span>' : n.priority === "high" ? '<span class="priority-tag high">مهم</span>' : ""}</h4>
+                        <p>${n.message}</p>
+                        <div class="notif-meta">
+                            <span><i class="fas fa-clock"></i> ${formatDateTime(n.created_at)}</span>
+                            ${!n.read ? '<span style="color:var(--accent-blue);font-weight:600;">● جديد</span>' : ""}
+                        </div>
+                    </div>
+                    <div class="notif-actions">
+                        ${!n.read ? `<button onclick="markNotifRead(${n.id})" title="قراءة"><i class="fas fa-check"></i></button>` : ""}
+                        <button onclick="deleteNotif(${n.id})" title="حذف"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>`;
+                    })
+                    .join("")
+            }
+        </div>`;
+      }
+
+      window.setNotifFilter = function (f) {
+        notifFilter = f;
+        if (currentUser.user_type === "customer") loadCustomerPage();
+        else loadTechAdminPage();
+      };
+
+      window.markNotifRead = async function (id) {
+        const n = await db.get("notifications", id);
+        n.read = true;
+        await db.put("notifications", n);
+        if (currentUser.user_type === "customer") loadCustomerPage();
+        else loadTechAdminPage();
+        updateNotifBell();
+      };
+
+      window.deleteNotif = async function (id) {
+        await db.delete("notifications", id);
+        if (currentUser.user_type === "customer") loadCustomerPage();
+        else loadTechAdminPage();
+        updateNotifBell();
+      };
+
+      window.markAllNotifsRead = async function () {
+        const notifs = await db.filter(
+          "notifications",
+          (n) => n.user_id === currentUser.id && !n.read,
+        );
+        for (const n of notifs) {
+          n.read = true;
+          await db.put("notifications", n);
+        }
+        showToast("تم تحديد الكل كمقروء", "success");
+        if (currentUser.user_type === "customer") loadCustomerPage();
+        else loadTechAdminPage();
+        updateNotifBell();
+      };
+
+      window.clearReadNotifs = async function () {
+        const notifs = await db.filter(
+          "notifications",
+          (n) => n.user_id === currentUser.id && n.read,
+        );
+        for (const n of notifs) await db.delete("notifications", n.id);
+        showToast("تم حذف الإشعارات المقروءة", "success");
+        if (currentUser.user_type === "customer") loadCustomerPage();
+        else loadTechAdminPage();
+      };
+
+      // ==========================================
+      // NOTIFICATION DROPDOWN
+      // ==========================================
+      window.toggleNotifDropdown = async function () {
+        const dd = document.getElementById("notifDropdown");
+        if (dd.classList.contains("show")) {
+          dd.classList.remove("show");
+          return;
+        }
+        const notifs = (
+          await db.filter("notifications", (n) => n.user_id === currentUser.id)
+        )
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          .slice(0, 10);
+
+        dd.innerHTML = `
+        <div class="notif-dropdown-header">
+            <h4>الإشعارات</h4>
+            <button onclick="markAllNotifsRead();toggleNotifDropdown();">قراءة الكل</button>
+        </div>
+        <div class="notif-dropdown-list">
+            ${
+              notifs.length === 0
+                ? '<div style="padding:20px;text-align:center;color:var(--text-muted);">لا توجد إشعارات</div>'
+                : notifs
+                    .map((n) => {
+                      const colors = {
+                        success: "var(--accent-green)",
+                        warning: "var(--accent-yellow)",
+                        error: "var(--accent-red)",
+                        info: "var(--accent-blue)",
+                      };
+                      const c = colors[n.type] || colors.info;
+                      return `
+                <div class="notif-dropdown-item ${n.read ? "" : "unread"}" onclick="markNotifRead(${n.id})">
+                    <div class="notif-icon" style="background:${c}20;color:${c};"><i class="fas ${n.icon || "fa-bell"}"></i></div>
+                    <div class="notif-content">
+                        <h5>${n.title}</h5>
+                        <p>${n.message.substring(0, 60)}${n.message.length > 60 ? "..." : ""}</p>
+                    </div>
+                </div>`;
+                    })
+                    .join("")
+            }
+        </div>
+        <div class="notif-dropdown-footer">
+            <a onclick="navigate('notifications-page');document.getElementById('notifDropdown').classList.remove('show');">عرض جميع الإشعارات</a>
+        </div>`;
+        dd.classList.add("show");
+      };
+
+      // Close dropdown on outside click
+      document.addEventListener("click", function (e) {
+        const bell = e.target.closest(".notification-bell");
+        const dd = document.getElementById("notifDropdown");
+        if (!bell && dd) dd.classList.remove("show");
+      });
+
+      // ==========================================
+      // MANAGE USERS (ADMIN ONLY)
+      // ==========================================
+      async function renderManageUsers(el) {
+        const customers = await db.filter(
+          "users",
+          (u) => u.user_type === "customer",
+        );
+        const technicians = await db.filter(
+          "users",
+          (u) => u.user_type === "technician",
+        );
+
+        el.innerHTML = `
+        <div class="card" style="margin-bottom:20px;">
+            <div class="card-header">
+                <h3><i class="fas fa-users" style="color:var(--accent-blue);margin-left:8px;"></i> الزبائن (${customers.length})</h3>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>الاسم</th><th>الهاتف</th><th>اسم المستخدم</th><th>تاريخ التسجيل</th><th>الإجراءات</th></tr></thead>
+                    <tbody>
+                        ${customers
+                          .map(
+                            (c) => `
+                        <tr>
+                            <td>${c.name}</td>
+                            <td>${c.phone}</td>
+                            <td>${c.username}</td>
+                            <td>${formatDate(c.created_at)}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="editUserModal(${c.id})"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteUser(${c.id})"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`,
+                          )
+                          .join("")}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-user-cog" style="color:var(--accent-purple);margin-left:8px;"></i> الفنيون (${technicians.length})</h3>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>الاسم</th><th>الهاتف</th><th>التخصص</th><th>الخبرة</th><th>الإجراءات</th></tr></thead>
+                    <tbody>
+                        ${technicians
+                          .map(
+                            (t) => `
+                        <tr>
+                            <td>${t.name}</td>
+                            <td>${t.phone}</td>
+                            <td>${t.specialty || "-"}</td>
+                            <td>${t.experience_years || 0} سنوات</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="editUserModal(${t.id})"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteUser(${t.id})"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`,
+                          )
+                          .join("")}
+                    </tbody>
+                </table>
+            </div>
+        </div>`;
+      }
+
+      window.editUserModal = async function (userId) {
+        const user = await db.get("users", userId);
+        const modal = document.getElementById("modalContent");
+        const isTech = user.user_type === "technician";
+        modal.innerHTML = `
+        <div class="modal-header">
+            <h3><i class="fas fa-user-edit" style="color:var(--accent-blue);margin-left:8px;"></i> تعديل ${isTech ? "الفني" : "الزبون"}</h3>
+            <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="form-group">
+            <label>الاسم</label>
+            <input type="text" id="editUserName" value="${user.name}">
+        </div>
+        <div class="form-group">
+            <label>رقم الهاتف</label>
+            <input type="tel" id="editUserPhone" value="${user.phone}">
+        </div>
+        <div class="form-group">
+            <label>كلمة المرور</label>
+            <input type="password" id="editUserPassword" value="${user.password}" placeholder="اتركها فارغة لعدم التغيير">
+        </div>
+        ${
+          isTech
+            ? `
+        <div class="form-group">
+            <label>التخصص</label>
+            <input type="text" id="editUserSpecialty" value="${user.specialty || ""}">
+        </div>
+        <div class="form-group">
+            <label>سنوات الخبرة</label>
+            <input type="number" id="editUserExp" value="${user.experience_years || 0}">
+        </div>`
+            : ""
+        }
+        <button class="btn btn-primary btn-full" onclick="saveUserEdit(${userId})"><i class="fas fa-save"></i> حفظ التعديلات</button>`;
+        document.getElementById("modalOverlay").classList.add("show");
+      };
+
+      window.saveUserEdit = async function (userId) {
+        const user = await db.get("users", userId);
+        user.name =
+          document.getElementById("editUserName").value.trim() || user.name;
+        user.phone =
+          document.getElementById("editUserPhone").value.trim() || user.phone;
+        const newPass = document
+          .getElementById("editUserPassword")
+          .value.trim();
+        if (newPass) user.password = newPass;
+        if (user.user_type === "technician") {
+          const specEl = document.getElementById("editUserSpecialty");
+          const expEl = document.getElementById("editUserExp");
+          if (specEl) user.specialty = specEl.value.trim();
+          if (expEl) user.experience_years = parseInt(expEl.value) || 0;
+        }
+        await db.put("users", user);
+        closeModal();
+        showToast("تم تحديث البيانات", "success");
+        loadTechAdminPage();
+      };
+
+      window.deleteUser = async function (userId) {
+        if (!confirm("هل أنت متأكد من حذف هذا المستخدم؟")) return;
+        await db.delete("users", userId);
+        showToast("تم حذف المستخدم", "success");
+        loadTechAdminPage();
+      };
+
+      // ==========================================
+      // REPORTS (ADMIN ONLY)
+      // ==========================================
+      async function renderReports(el) {
+        const pumps = await db.getAll("pumps");
+        const debts = await db.getAll("debts");
+        const customers = await db.filter(
+          "users",
+          (u) => u.user_type === "customer",
+        );
+        const totalRevenue = pumps
+          .filter((p) => p.status === "delivered")
+          .reduce((s, p) => s + (p.final_cost || 0), 0);
+        const totalDebt = debts.reduce((s, d) => s + d.remaining_amount, 0);
+        const totalPaid = debts.reduce((s, d) => s + d.paid_amount, 0);
+
+        // Monthly stats
+        const thisMonth = new Date().getMonth();
+        const thisMonthPumps = pumps.filter(
+          (p) => new Date(p.created_at).getMonth() === thisMonth,
+        );
+
+        el.innerHTML = `
+        <div class="stats-grid">
+            <div class="stat-card green">
+                <div class="stat-icon"><i class="fas fa-coins"></i></div>
+                <div class="stat-value">${formatMoney(totalRevenue)}</div>
+                <div class="stat-label">إجمالي الإيرادات</div>
+            </div>
+            <div class="stat-card blue">
+                <div class="stat-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                <div class="stat-value">${formatMoney(totalPaid)}</div>
+                <div class="stat-label">إجمالي المحصّل</div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                <div class="stat-value">${formatMoney(totalDebt)}</div>
+                <div class="stat-label">إجمالي الديون المتبقية</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
+                <div class="stat-value">${thisMonthPumps.length}</div>
+                <div class="stat-label">محركات هذا الشهر</div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-header"><h3><i class="fas fa-chart-pie" style="color:var(--accent-blue);margin-left:8px;"></i> توزيع حالات المحركات</h3></div>
+                <div style="padding:10px;">
+                    ${["unrepaired", "in_progress", "ready", "delivered"]
+                      .map((s) => {
+                        const count = pumps.filter(
+                          (p) => p.status === s,
+                        ).length;
+                        const pct = pumps.length
+                          ? Math.round((count / pumps.length) * 100)
+                          : 0;
+                        const colors = {
+                          unrepaired: "var(--accent-red)",
+                          in_progress: "var(--accent-yellow)",
+                          ready: "var(--accent-green)",
+                          delivered: "var(--accent-blue)",
+                        };
+                        return `
+                        <div style="margin-bottom:12px;">
+                            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">
+                                <span>${statusText(s)}</span>
+                                <span>${count} (${pct}%)</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div style="height:100%;width:${pct}%;background:${colors[s]};border-radius:4px;transition:width 0.5s;"></div>
+                            </div>
+                        </div>`;
+                      })
+                      .join("")}
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3><i class="fas fa-users" style="color:var(--accent-purple);margin-left:8px;"></i> أكثر الزبائن نشاطاً</h3></div>
+                <div id="topCustomers"></div>
+            </div>
+        </div>`;
+
+        const topCustEl = document.getElementById("topCustomers");
+        const custPumps = {};
+        pumps.forEach((p) => {
+          custPumps[p.customer_id] = (custPumps[p.customer_id] || 0) + 1;
+        });
+        const sorted = Object.entries(custPumps)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5);
+        for (const [cid, count] of sorted) {
+          const cust = await db.get("users", parseFloat(cid));
+          topCustEl.innerHTML += `
+            <div class="pump-item">
+                <div class="pump-info">
+                    <h4>${cust ? cust.name : "غير معروف"}</h4>
+                    <p>${count} محرك</p>
+                </div>
+            </div>`;
+        }
+      }
+
+      // ==========================================
+      // MODAL HELPERS
+      // ==========================================
+      window.closeModal = function () {
+        const overlay = document.getElementById("modalOverlay");
+        if (overlay) overlay.classList.remove("show");
+        const temp = document.getElementById("tempModalOverlay");
+        if (temp) temp.remove();
+      };
+
+      // ==========================================
+      // LOGOUT
+      // ==========================================
+      window.handleLogout = function () {
+        clearSession();
+        activeChatUser = null;
+        if (notifInterval) clearInterval(notifInterval);
+        currentPage = "login";
+        render();
+        showToast("تم تسجيل الخروج", "info");
+      };
+
+      // ==========================================
+      // INITIALIZE APP
+      // ==========================================
+      async function initApp() {
+        try {
+          await db.init();
+          await seedData();
+          if (loadSession()) {
+            // Re-fetch user data from DB to get latest
+            const freshUser = await db.get("users", currentUser.id);
+            if (freshUser) {
+              currentUser = freshUser;
+              saveSession(freshUser);
+              currentPage = "dashboard";
+            } else {
+              clearSession();
+            }
+          }
+          render();
+        } catch (e) {
+          console.error("Init error:", e);
+          showToast("خطأ في تهيئة التطبيق", "error");
+        }
+      }
+
+      initApp();
+    </script>
+  </body>
+</html>
